@@ -1,0 +1,374 @@
+//
+// Main Processor 1
+//
+const repRange = 18    // Repair range
+const repApprRange = 5    // Repair approach range
+const repNotFar = 200    // Max repair range
+const defendRange = 20    // Defend range
+const vaultRange = 5    // Vault approach range
+const idleRange = 15    // Idle range
+const nullPoint = -100    // Null point
+const unitApprRange = 5    // Unit approach range if can't land
+const unitSearchRange = 10    // Unit search range
+const spawnRange = 40    // Enemy spawn range
+
+ubind(@vela)
+isKamikaze = @unit.flag    // Use flags to define 2 states: 0- default heal and attack; 1- don't heal, just attack
+if isKamikaze != 1
+    hp = @unit.health
+    maxRepHp = cell1[0]
+    if hp <= maxRepHp
+        found = ulocate(building, repair, false, outx, outy, building)
+        if found != 0
+            power = building.totalPower
+            if power > 0
+                isNear = within(outx, outy, repRange)
+                if isNear != 0
+                    autoDefend()    // If autoDefend detects enemy nearby, it will attack it and run logic from startup
+                    boost(1)    // If no enemy nearby, go here
+                    approach(outx, outy, repApprRange)
+                    end()
+                end
+                minRepHp = cell1[1]
+                if hp <= minRepHp    // Min hp to fly to repair
+                    isNotFar = within(outx, outy, repNotFar)
+                    if isNotFar != 0
+                        boost(1)
+                        move(outx, outy)
+                        end()
+                    end
+                end
+            end
+        end
+    end
+end
+
+items = @unit.totalItems
+unitCap = @unit.itemCapacity
+if items < unitCap    // Unit item loading logic
+    theItem = sorter1.config
+    if theItem !== null
+        if vault1 !== null
+            outx = vault1.x
+            outy = vault1.y
+            isNear = within(outx, outy, defendRange)
+            if isNear != 0
+                autoDefend()
+                itemTake(vault1, theItem, unitCap)
+                boost(1)
+                approach(outx, outy, vaultRange)
+                end()
+            else
+                boost(1)
+                move(outx, outy)
+                end()
+            end
+        end
+    end
+end
+
+flag(0)
+isAttack = switch1.enabled
+if isAttack != 1
+    if vault1 == 0    // If no vault, approach to this processor
+        outx = @this.x
+        outy = @this.y
+    else
+        outx = vault1.x
+        outy = vault1.y
+    end
+    isNear = within(outx, outy, defendRange)
+    if isNear != 0
+        autoDefend()
+        boost(1)
+        approach(outx, outy, idleRange)
+        cell1[2] = nullPoint    // Reset Target to start with a new Target after idle
+        cell1[3] = nullPoint
+        end()
+    else
+        boost(1)
+        move(outx, outy)
+        cell1[2] = nullPoint
+        cell1[3] = nullPoint
+        end()
+    end
+end
+
+inline def autoDefend()
+    enUnit = uradar(enemy, any, any, distance, 1)
+    if enUnit !== null
+        boost(0)
+        targetp(enUnit, 1)
+        end()
+    end
+    unitRange = @unit.range
+    enTurr = ulocate(building, turret, true, outx, outy)
+    if enTurr != 0
+        targetBuilding(outx, outy, unitRange)
+    end
+    damAlly = ulocate(damaged, outx, outy)
+    if damAlly != 0
+        targetBuilding(outx, outy, unitRange)
+    end
+    inline def targetBuilding(outx, outy, unitRange)
+        isNear = within(outx, outy, unitRange)
+        if isNear != 0
+            boost(0)
+            target(outx, outy, 1)
+            end()
+        end
+    end
+end
+
+// Auto attack logic
+enUnit = uradar(enemy, any, any, distance, 1)
+if enUnit !== null
+    enMaxHp = enUnit.maxHealth
+    dangEnemy = cell1[4]
+    if enMaxHp >= dangEnemy
+        boost(0)
+        targetp(enUnit, 1)
+        outx = enUnit.x
+        outy = enUnit.y
+        cell1[9] = outx
+        cell1[10] = outy
+        isBoosted = @unit.boosting
+        if isBoosted != 0
+            approach(outx, outy, unitApprRange)
+            end()
+        else
+            attackRange = cell1[5]
+            approach(outx, outy, attackRange)
+            end()
+        end
+    end
+end
+unitRange = @unit.range
+enTurr = ulocate(building, turret, true, turx, tury)
+if enTurr != 0
+    autoAttack(turx, tury, unitRange)
+end
+enCore = ulocate(building, core, true, corex, corey)
+if enCore != 0
+    autoAttack(corex, corey, unitRange)
+end
+enGener = ulocate(building, generator, true, outx, outy)
+if enGener != 0
+    autoAttack(outx, outy, unitRange)
+end
+
+inline def autoAttack(outx, outy, unitRange)
+    isNear = within(outx, outy, unitRange)
+    if isNear != 0
+        boost(0)
+        target(outx, outy, 1)
+        isBoosted = @unit.boosting
+        if isBoosted != 0
+            flag(1)
+            move(outx, outy)
+            end()
+        else
+            approach(outx, outy, unitRange)
+            end()
+        end
+    end
+end
+
+isControll = arc1.controlled
+if isControll != 0    // Manual controll
+    shootX = arc1.shootX
+    shootY = arc1.shootY
+    boost(1)
+    move(shootX, shootY)
+    end()
+end
+
+if cell1[8] != 0    // Spawn attack mode
+    enx = cell1[9]
+    eny = cell1[10]
+    if enx != nullPoint and eny != nullPoint    // Is there a last enemy unit?
+        boost(1)
+        move(enx, eny)
+        isNear = within(enx, eny, unitSearchRange)
+        if isNear != 0    // If logic reached this point and unit is near this target, there are no enemy units nearby
+            cell1[9] = nullPoint
+            cell1[10] = nullPoint
+            end()
+        end
+        end()
+    end
+    enSpawn = ulocate(spawn, outx, outy)
+    isControlled = @unit.controlled    // If unit is dead, all ulocate return null, so check is unit  still controlled by processor
+    if isControlled == 1
+        target(outx, outy, 0)
+        if enSpawn != 0
+            isNear = within(outx, outy, spawnRange + 6)
+            if isNear != 0
+                isInSpawn = within(outx, outy, spawnRange)
+                if isInSpawn != 1    // If unit is not in spawn
+                    unitX = @unit.x
+                    unitY = @unit.y
+                    getBlock(unitX, unitY, 0, 0, floor)
+                    if floor != @deep-water and floor != @molten-slag
+                        boost(0)
+                        approach(outx, outy, spawnRange + 6)
+                        end()
+                    end
+                end
+            end
+            boost(1)
+            approach(outx, outy, spawnRange + 6)
+            end()
+        else
+            cell1[8] = 0
+            switch1.enabled = 0
+            cell1[6] = 0
+            end()
+        end
+    end
+    end()
+end
+
+isControlled = @unit.controlled
+if isControlled == 1
+    prTarget = switch2.enabled
+    apprX = cell1[2]
+    if apprX == nullPoint
+        apprY = cell1[3]
+        if apprY == nullPoint
+            writeTarget(prTarget, enCore, corex, corey, enTurr, turx, tury)    // Initialize Target if points are null
+            apprX = cell1[2]
+        end
+    end
+    apprY = cell1[3]
+
+    modeSaved = cell1[6]
+    targetSaved = cell1[7]
+    if isAttack != modeSaved or prTarget != targetSaved
+        cell1[6] = isAttack
+        cell1[7] = prTarget
+        writeTarget(prTarget, enCore, corex, corey, enTurr, turx, tury)    // Initialize Target if mode has changed
+    end
+
+    isNear = within(apprX, apprY, unitRange)
+    if isNear != 0
+        getBlock(apprX, apprY, 0, block, 0)
+        if block == 0    // If block is broken
+            writeTarget(prTarget, enCore, corex, corey, enTurr, turx, tury)
+            end()
+        end
+        blockTeam = block.team
+        if blockTeam == 1    // If block is captured
+            writeTarget(prTarget, enCore, corex, corey, enTurr, turx, tury)
+            end()
+        end
+    else
+        boost(1)
+        approach(apprX, apprY, unitRange)
+    end
+
+    inline def writeTarget(prTarget, enCore, corex, corey, enTurr, turx, tury)
+        if prTarget != 0
+            if enCore != 0
+                cell1[2] = corex
+                cell1[3] = corey
+            elsif enTurr != 0
+                cell1[2] = turx
+                cell1[3] = tury
+                switch2.enabled = 0
+                cell1[7] = 0
+            else
+                spawnAttack()
+            end
+        elsif enTurr != 0
+            cell1[2] = turx
+            cell1[3] = tury
+        elsif enCore != 0
+            cell1[2] = corex
+            cell1[3] = corey
+            switch2.enabled = 1
+            cell1[7] = 1
+        else
+            spawnAttack()
+        end
+
+        inline def spawnAttack()
+            cell1[8] = 1    // Enable spawn attack mode
+            cell1[4] = 0    // Set danger enemy to 0 to attack all units
+            sorter1.config = null
+        end
+    end
+end
+
+
+//
+// Cell Processor 1
+//
+const nullPoint = -100
+ubind(@vela)
+if @unit !== null
+    if cell1 !== null
+        maxHp = @unit.maxHealth
+        maxRepHp = maxHp * 0.9    // Max hp to heal
+        minRepHp = maxHp * 0.6    // Min hp to heal
+        cell1[0] = maxRepHp
+        cell1[1] = minRepHp
+        cell1[2] = nullPoint    // Target X
+        cell1[3] = nullPoint    // Target Y
+        cell1[4] = 600    // Min dangerous enemy hp
+        unitRange = @unit.range
+        attackRange = floor(unitRange / 1.66)    // Similar to floor(unitRange * 0.6)
+        cell1[5] = attackRange    // Approach range to enemy unit. Closer than unitRange to not lose enemy when shooting due to speed
+        cell1[6] = 0    // Idle/Attack last state
+        cell1[7] = 1    // Primary target last state
+        cell1[8] = 0    // Spawn attack
+        cell1[9] = nullPoint    // Enemy unit X
+        cell1[10] = nullPoint    // Enemy unit Y
+
+        cell1[60] = 1
+        lastWrite = cell1[60]
+        if lastWrite != 0    // Check if everything was written successfully (cell wasn't destroyed)
+            switch1.enabled = 0
+            switch2.enabled = 1
+            stopProcessor()
+        end
+    end
+end
+
+
+//
+// Message Processor 1
+//
+print("[pink]Vela AI (Auto attack logIc)\n[white]Click switch next to message to toggle unit [red]attack[white]/[green]idle[white].\nAuto attacks enemy; heals units at rep turrets; changes primary target; approaches to 1 target at time. You can control approach point in arc turret\n\n by [orange]testt [white]in 23-07-26\n inspired by [orange]|DE|Пастаф\n\n [cyan]ver. 2.2.0[white]\n\nUnits ")
+isEnabled = switch1.enabled
+if isEnabled != 1
+    print("are [green]Idle")
+else
+    print("[red]Attack")
+end
+printflush(message1)
+
+print("[purple]Primary Target\n [white]Enabled => Targeting [red]Core[white]\n Disabled => Targeting [blue]Turret[white]\n\nTargeting: ")
+prTarget = switch2.enabled
+if prTarget != 1
+    println("[blue]Turret")
+else
+    println("[red]Core")
+end
+print("\n[yellow]Source code[gold] with comments: [cyan]github.com/limonovthesecond2/vela-ai")
+printflush(message2)
+
+i = @links
+while i >= 0
+    i -= 1
+    block = getlink(i)
+    blockType = block.type
+    if blockType == @unloader
+        bombType = sorter1.config
+        if bombType != 0
+            block.config = bombType
+        end
+    elsif blockType == @arc
+        block.enabled = isEnabled
+    end
+end
