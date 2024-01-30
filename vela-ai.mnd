@@ -1,11 +1,12 @@
 //
-// Main Processor 1
+// Main Processor
 //
 const defendRange = 18    // Defend range
 const repAppr = 2    // Repair approach distance
 const repNotFar = 200    // Max repair distance
 const vaultRange = 6    // Vault approach distance
 const idleRange = 14    // Idle distance
+const unitApprRange = 8    // Distance to approach the enemy if can't land
 const nullPoint = -100    // Null point
 const spawnRange = 60    // Enemy spawn range
 const unitSearchRange = 5    // Search range of enemy units
@@ -45,8 +46,8 @@ items = @unit.totalItems
 unitCap = @unit.itemCapacity
 if items < unitCap    // Bomb loading logic
     bombType = sorter1.config
-    if bombType !== null
-        if vault1 !== null
+    if bombType != null
+        if vault1 != null
             outx = vault1.x
             outy = vault1.y
             approach(outx, outy, vaultRange)
@@ -64,8 +65,8 @@ if items < unitCap    // Bomb loading logic
 end
 
 flag(0)    // Reset flag
-isAttack = switch1.enabled
-if isAttack == 0    // Idle logic
+isEnabled = cell1[21]
+if isEnabled == 0    // Idle logic
     if vault1 == null    // If no vault, approach to this processor
         outx = @this.x
         outy = @this.y
@@ -86,7 +87,7 @@ end
 
 inline def autoDefend()
     enUnit = uradar(enemy, any, any, distance, 1)
-    if enUnit !== null
+    if enUnit != null
         boost(0)
         targetp(enUnit, 1)
         end()
@@ -114,9 +115,9 @@ end
 
 // Auto attack logic
 enUnit = uradar(enemy, any, any, maxHealth, 1)
-if enUnit !== null
+if enUnit != null
     enMaxHp = enUnit.maxHealth
-    dangEnemy = cell1[14]
+    dangEnemy = cell1[13]
     if enMaxHp >= dangEnemy
         boost(0)
         targetp(enUnit, 1)
@@ -126,11 +127,10 @@ if enUnit !== null
         cell1[11] = outy
         isBoosted = @unit.boosting
         if isBoosted == 1
-            unitApprRange = cell1[12]
             approach(outx, outy, unitApprRange)
             end()
         else
-            attackRange = cell1[13]
+            attackRange = cell1[12]
             approach(outx, outy, attackRange)
             end()
         end
@@ -168,27 +168,35 @@ inline def autoAttack(outx, outy, unitRange)
 end
 
 isControll = arc1.controlled
-if isControll != 0    // Manual controll
+if isControll == 2    // Manual controll
     outx = arc1.shootX
     outy = arc1.shootY
-    isNear = within(outx, outy, unitRange)
+    apprRange = unitRange * 1.2
+    isNear = within(outx, outy, apprRange)
     if isNear == 1
-        boost(0)
-        target(outx, outy, 1)
-        isBoosted = @unit.boosting
-        if isBoosted == 1
-            move(outx, outy)
-            flag(1)
-            end()
+        isShooting = arc1.shooting
+        if isShooting == 1
+            boost(0)
+            target(outx, outy, isShooting)
+            isBoosted = @unit.boosting
+            if isBoosted == 1
+                move(outx, outy)
+                flag(1)
+                end()
+            else
+                attackRange = cell1[12]
+                approach(outx, outy, attackRange)
+                end()
+            end
         else
-            approach(outx, outy, unitRange)
+            boost(1)
+            move(outx, outy)
             end()
         end
-    else
-        boost(1)
-        approach(outx, outy, unitRange)
-        end()
     end
+    boost(1)
+    approach(outx, outy, unitRange)
+    end()
 end
 
 gameMode = cell1[20]
@@ -209,11 +217,11 @@ else
                 getBlock(unitX, unitY, 0, 0, floor)    // Check floor under unit
                 if floor != @deep-water
                     if floor != @molten-slag
-                        boost(0)
+                        boost(0)    // Landing for repairs
                         target(0, 0, 0)    // Make unit not fire at last target
                         end()
                     end
-                end 
+                end
             end
         end
         boost(1)
@@ -226,54 +234,57 @@ else
         if isNear == 1
             cell1[10] = nullPoint    // If code reached this point, there are no enemy units around
         end
-        end()
     end
 end
 
 
 //
-// Cell Processor 1
+// Cell Processor
 //
 const nullPoint = -100
-UNIT = @vela
-ubind(UNIT)
-if cell1 !== null
-    if @unit !== null
-        maxHp = @unit.maxHealth
-        unitRange = @unit.range
-        isDead = @unit.dead
-        if isDead == 0    // If unit died after bind @unit != null, but dead == 1. Check it to get correct values instead of 0
-            maxRepHp = maxHp * 0.92    // Max hp to repair
-            cell1[0] = maxRepHp
-            minRepHp = maxHp * 0.5    // Min hp to repair
-            cell1[1] = minRepHp
-            cell1[10] = nullPoint    // Enemy unit X
-            cell1[11] = nullPoint    // Enemy unit Y
-            unitApprRange = floor(unitRange * 0.4)
-            cell1[12] = unitApprRange    // Distance to approach the enemy if can't land
-            attackRange = floor(unitRange * 0.8)
-            cell1[13] = attackRange    // Approach range to enemy unit. Closer than unitRange to not lose enemy when shooting
-            cell1[60] = 1
-            while true
-                lastWrite = cell1[60]
-                if lastWrite == 1    // Check is cell is alive
+
+while true
+    ubind(@vela)
+    if cell1 != null
+        if @unit != null
+            maxHp = @unit.maxHealth
+            unitRange = @unit.range
+            isDead = @unit.dead
+            if isDead != 1    // If unit died after bind @unit != null, but dead == 1. Check it to get correct values instead of null
+                maxRepHp = maxHp * 0.90    // Max hp to repair
+                cell1[0] = maxRepHp
+                minRepHp = maxHp * 0.5    // Min hp to repair
+                cell1[1] = minRepHp
+                cell1[10] = nullPoint    // Enemy unit X
+                cell1[11] = nullPoint    // Enemy unit Y
+
+                while cell1 != null    // Check is cell is still alive
+                    isControll = arc1.controlled
+                    if isControll == 2
+                        cell1[21] = 1
+                        switch1.enabled = 1
+                    else
+                        isEnabled = switch1.enabled
+                        cell1[21] = isEnabled
+                    end
+
                     enCore = ulocate(building, core, true, 0, 0, 0)
                     if enCore == 1
+                        cell1[12] = unitRange    // Approach range to enemy unit
+                        cell1[13] = 600    // Min hp for dangerous enemy
                         cell1[20] = 0    // Attack mode (approach to cores)
-                        cell1[14] = 600    // Min hp for dangerous enemy
-                        wait(2)    // No need to check frequently
                     else
                         isDead = @unit.dead
-                        if isDead == 1
-                            ubind(UNIT)
+                        if isDead != 1
+                            attackRange = unitRange * 0.8    // Closer than unitRange to not lose enemy when shooting
+                            cell1[12] = attackRange
+                            cell1[13] = 0    // Attack all units
+                            cell1[20] = 1    // Survival mode (approach to enemy units first)
                         else
-                            cell1[20] = 1    // Survival mode (approach to enemy units)
-                            cell1[14] = 0
-                            wait(2)
+                            break
                         end
                     end
-                else
-                    end()
+                    wait(0.2)    // No need to check frequently
                 end
             end
         end
@@ -282,9 +293,9 @@ end
 
 
 //
-// Message Processor 1
+// Message Processor
 //
-print("[pink]Vela AI (Auto attack logIc)\n[]Click switch to toggle [red]attack[]/[green]idle[].\nUnits attack enemy, approach to cores and spawns, repair at nearest building if not too far. You can control units in arc turret\n\n by [orange]testt []in 23-12-29\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.4[]\n\nUnits ")
+print("[pink]Vela AI (auto Attack logIc)\n[]Click switch to toggle [red]attack[]/[green]idle[].\nUnits attack enemy, approach to cores and spawns, repair at nearest building if not too far. You can control units in arc turret\n\n by [orange]testt []in 24-01-29\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.5[]\n\nUnits ")
 isEnabled = switch1.enabled
 if isEnabled == 0
     print("are [green]Idle")
@@ -294,17 +305,21 @@ end
 print("\n\n[]Source code with comments: [cyan]github.com/limonovthesecond2/vela-ai")
 printflush(message1)
 
-i = @links
-while i >= 0
-    i -= 1
-    block = getlink(i)
-    blockType = block.type
-    if blockType == @arc
-        block.enabled = isEnabled
-    elsif blockType == @unloader
-        bombType = sorter1.config
-        if bombType !== null
-            block.config = bombType
+bomb = sorter1.config
+if bomb != null
+    i = 0
+    while true
+        block = getlink(i)
+        blockType = block.type
+        case blockType
+            when @unloader, @item-source then
+                block.config = bomb
+        end
+        i += 1
+        if i >= @links
+            end()
         end
     end
+else
+    wait(1)
 end
