@@ -14,24 +14,22 @@ if isKamikaze == 0    // Unit repair logic
     hp = @unit.health
     maxRepHp = cell1[0]
     if hp < maxRepHp
-        found = ulocate(building, repair, false, outx, outy, building)
-        if found == 1
-            power = building.totalPower
-            if power > 0
-                isNear = within(outx, outy, defendRange)
-                if isNear == 1
-                    approach(outx, outy, repAppr)
-                    autoDefend()
-                    end()
-                else
-                    minRepHp = cell1[1]
-                    if hp <= minRepHp
-                        isNotFar = within(outx, outy, repNotFar)
-                        if isNotFar == 1
-                            boost(1)
-                            approach(outx, outy, repAppr)
-                            end()
-                        end
+        ulocate(building, repair, false, outx, outy, building)
+        power = building.totalPower
+        if power > 0
+            isNear = within(outx, outy, defendRange)
+            if isNear == 1
+                approach(outx, outy, repAppr)
+                autoDefend()
+                end()
+            else
+                minRepHp = cell1[1]
+                if hp <= minRepHp
+                    isNotFar = within(outx, outy, repNotFar)
+                    if isNotFar == 1
+                        boost(1)
+                        approach(outx, outy, repAppr)
+                        end()
                     end
                 end
             end
@@ -82,7 +80,7 @@ if isEnabled == 0    // Idle logic
     end
 end
 
-inline def autoDefend()
+def autoDefend()
     enUnit = uradar(enemy, any, any, distance, 1)
     if enUnit != null
         boost(0)
@@ -100,7 +98,7 @@ inline def autoDefend()
     end
     boost(1)    // If no enemy nearby, fly to not swim in water or lava
 
-    inline def targetBuilding(outx, outy, unitRange)
+    def targetBuilding(outx, outy, unitRange)
         isNear = within(outx, outy, unitRange)
         if isNear == 1
             boost(0)
@@ -147,7 +145,7 @@ if enGener == 1
     autoAttack(outx, outy, unitRange)
 end
 
-inline def autoAttack(outx, outy, unitRange)
+def autoAttack(outx, outy, unitRange)
     isNear = within(outx, outy, unitRange)
     if isNear == 1
         boost(0)
@@ -228,7 +226,9 @@ else
         boost(1)
         move(outx, outy)    // Approach to enemy unit
         isNear = within(outx, outy, unitSearchRange)
-        if isNear == 1
+        if isNear != 1
+            end()
+        else
             cell1[10] = nullPoint    // If code reached this point, there are no enemy units around
         end
     end

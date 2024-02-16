@@ -1,48 +1,47 @@
+#set optimization = aggressive    // Enable extra optimisations including Jump Threading
 const nullPoint = -100
 
-while true
-    ubind(@vela)
-    if cell1 != null
-        if @unit != null
-            maxHp = @unit.maxHealth
-            unitRange = @unit.range
-            isDead = @unit.dead
-            if isDead != 1    // If unit died after bind @unit != null, but dead == 1. Check it to get correct values instead of null
-                maxRepHp = maxHp * 0.90    // Max hp to repair
-                cell1[0] = maxRepHp
-                minRepHp = maxHp * 0.5    // Min hp to repair
-                cell1[1] = minRepHp
-                cell1[10] = nullPoint    // Enemy unit X
-                cell1[11] = nullPoint    // Enemy unit Y
+ubind(@vela)
+if cell1 != null
+    if @unit != null
+        maxHp = @unit.maxHealth
+        unitRange = @unit.range
+        isDead = @unit.dead
+        if isDead != 1    // Check is unit is still alive to get the correct values instead of null
+            maxRepHp = maxHp * 0.9    // Max hp to repair
+            minRepHp = maxHp * 0.5    // Min hp to repair
+            cell1[0] = maxRepHp
+            cell1[1] = minRepHp
+            cell1[10] = nullPoint    // Enemy unit X
+            cell1[11] = nullPoint    // Enemy unit Y
 
-                while cell1 != null    // Check is cell is still alive
-                    isControll = arc1.controlled
-                    if isControll == 2
-                        cell1[21] = 1
-                        switch1.enabled = 1
-                    else
-                        isEnabled = switch1.enabled
-                        cell1[21] = isEnabled
-                    end
-
-                    enCore = ulocate(building, core, true, 0, 0, 0)
-                    if enCore == 1
-                        cell1[12] = unitRange    // Approach range to enemy unit
-                        cell1[13] = 600    // Min hp for dangerous enemy
-                        cell1[20] = 0    // Attack mode (approach to cores)
-                    else
-                        isDead = @unit.dead
-                        if isDead != 1
-                            attackRange = unitRange * 0.8    // Closer than unitRange to not lose enemy when shooting
-                            cell1[12] = attackRange
-                            cell1[13] = 0    // Attack all units
-                            cell1[20] = 1    // Survival mode (approach to enemy units first)
-                        else
-                            break
-                        end
-                    end
-                    wait(0.2)    // No need to check frequently
+            while cell1 != null    // Check is cell is still alive
+                isControll = arc1.controlled
+                if isControll == 2
+                    cell1[21] = 1    // Enable attack when someone controls the turret
+                    switch1.enabled = 1
+                else
+                    isEnabled = switch1.enabled
+                    cell1[21] = isEnabled
                 end
+
+                enCore = ulocate(building, core, true, 0, 0, 0)
+                if enCore == 1
+                    cell1[12] = unitRange    // Approach range to enemy unit
+                    cell1[13] = 600    // Min hp of a dangerous enemy
+                    cell1[20] = 0    // Attack mode (approach to cores)
+                else
+                    isDead = @unit.dead
+                    if isDead != 1
+                        attackRange = unitRange * 0.8    // Closer than unitRange to not lose enemy when shooting
+                        cell1[12] = attackRange
+                        cell1[13] = 0    // Attack all units
+                        cell1[20] = 1    // Survival mode (approach to enemy units first)
+                    else
+                        break
+                    end
+                end
+                wait(0.2)    // No need to check frequently
             end
         end
     end
