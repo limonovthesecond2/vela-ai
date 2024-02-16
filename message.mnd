@@ -1,0 +1,28 @@
+print("[pink]Vela AI (auto Attack logIc)\n[]Click switch to toggle [red]attack[]/[green]idle[].\nUnits attack enemy, approach to cores and spawns, repair at nearest building if not too far. You can control units in arc turret\n\n by [orange]testt []in 24-01-29\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.5[]\n\nUnits ")
+isEnabled = switch1.enabled
+if isEnabled == 0
+    print("are [green]Idle")
+else
+    print("[red]Attack")
+end
+print("\n\n[]Source code with comments: [cyan]github.com/limonovthesecond2/vela-ai")
+printflush(message1)
+
+bomb = sorter1.config
+if bomb != null
+    i = 0
+    while true
+        block = getlink(i)
+        blockType = block.type
+        case blockType
+            when @unloader, @item-source then
+                block.config = bomb
+        end
+        i += 1
+        if i >= @links
+            end()
+        end
+    end
+else
+    wait(1)
+end
