@@ -1,3 +1,4 @@
+#set optimization = aggressive    // Enable extra optimisations including Jump Threading
 const defendRange = 18    // Defend range
 const repAppr = 2    // Repair approach distance
 const repNotFar = 200    // Max repair distance
@@ -6,7 +7,7 @@ const idleRange = 14    // Idle distance
 const unitApprRange = 8    // Distance to approach the enemy if can't land
 const nullPoint = -100    // Null point
 const spawnRange = 60    // Enemy spawn range
-const unitSearchRange = 5    // Search range of enemy units
+const unitSearchRange = 5    // Search range of enemy units in Survival mode
 
 ubind(@vela)
 isKamikaze = @unit.flag    // Use flag(1) to skip repair
@@ -48,8 +49,8 @@ if items < unitCap    // Bomb loading logic
             approach(outx, outy, vaultRange)
             isNear = within(outx, outy, defendRange)
             if isNear == 1
-                autoDefend()
                 itemTake(vault1, bombType, unitCap)
+                autoDefend()
                 end()
             else
                 boost(1)
@@ -172,7 +173,7 @@ if isControll == 2    // Manual controll
         isShooting = arc1.shooting
         if isShooting == 1
             boost(0)
-            target(outx, outy, isShooting)
+            target(outx, outy, 1)
             isBoosted = @unit.boosting
             if isBoosted == 1
                 move(outx, outy)
@@ -188,10 +189,11 @@ if isControll == 2    // Manual controll
             move(outx, outy)
             end()
         end
+    else
+        boost(1)
+        approach(outx, outy, unitRange)
+        end()
     end
-    boost(1)
-    approach(outx, outy, unitRange)
-    end()
 end
 
 gameMode = cell1[20]
@@ -224,11 +226,9 @@ else
     else
         outy = cell1[11]
         boost(1)
-        move(outx, outy)    // Approach to enemy unit
+        move(outx, outy)    // Approach to last found enemy unit
         isNear = within(outx, outy, unitSearchRange)
-        if isNear != 1
-            end()
-        else
+        if isNear == 1
             cell1[10] = nullPoint    // If code reached this point, there are no enemy units around
         end
     end
