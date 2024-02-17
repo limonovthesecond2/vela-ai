@@ -21,6 +21,18 @@ Their purpose:
 - `Cell`: Calculates variables and writes them to the cell. Defines attack/idle/survival mode
 - `Message`: Writes messages and defines the item at the unloader/item source
 
+You may notice a lot of "unnecessary" variable declarations like
+```
+items = @unit.totalItems
+unitCap = @unit.itemCapacity
+if items < unitCap
+```
+instead they can be replaced with
+```
+if @unit.totalItems < @unit.itemCapacity
+```
+However, in the compiled code you will then notice several unnamed __temp* variables. It is not very easy to track which one is responsible for what during debugging. Therefore, all possible variables are declared to make debugging easier, since this does not affect performance in any way.
+
 ### Compilation after code changes
 - Copy all changed code of the processor
 - Go to MindCode Online Compiler: [http://mindcode.herokuapp.com/](http://mindcode.herokuapp.com/?s=clean)
