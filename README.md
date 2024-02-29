@@ -1,5 +1,5 @@
-# Vela AI (auto Attack logIc)
-Units are automatically repaired near the closest working repair turret if their health is below 50% and the repair turret is not too far away. Repaired up to 90%. Units will approach to the closest enemy core if there are no enemy units/turrets/cores/generators around. If there are no enemy cores left, the logic switches from attack mode to survival mode. Units will fly to the last enemy unit detected. If there are no enemies left, land around the enemy spawn if there is no lava or water underneath them. You can select the desired type of bombs in the sorter or place an unassigned one. You can tell units where to fly and shoot from the arc turret if they are idle. Simply enter this turret to take control of them.
+# Vela Attack logIc
+Units are automatically repaired near the closest working repair turret, if it is not too far away. They will approach to the nearest enemy core if there are no enemy units with max health more than 600, turrets, cores or generators around them. If a unit is unable to land and open fire on an enemy building, it goes into 'kamikaze' mode. This means that it will not repair until it lands or explodes above an enemy. You can select the desired type of bombs in the sorter or place an unassigned one. Also, you can tell units where to fly and shoot from the arc turret if they are idle. Simply enter this turret to take control of them.
 
 ## How to run
 The easiest way is to download `vela-ai-scheme.msch` and import it from mindustry's `Schematics` menu.
@@ -14,22 +14,15 @@ Once the file is downloaded, go to Mindustry. Open `Schematics` (from the main w
 ## Development
 The source code is written in [MindCode](https://github.com/cardillan/mindcode), so, please, read the [documentation](https://github.com/cardillan/mindcode/blob/main/doc/syntax/SYNTAX.markdown) first if you are not already familiar with it. For syntax highlighting, you can use [VSCode](https://code.visualstudio.com/) with [Mindcode](https://marketplace.visualstudio.com/items?itemName=TomSchi.mindcode) extension.
 
-The scheme consists of 3 types of processors: `Main`, `Cell` and `Message`. There are 2 `Main` hyperprocessors. The `Cell` is the microprocessor closest to the cell. The `Message` is another microprocessor.
-
-Their purpose:
-- `Main`: The most essential unit logics including repair, attack, approach etc. Uses variables from the cell
-- `Cell`: Calculates variables and writes them to the cell. Defines attack/idle/survival mode
-- `Message`: Writes messages and defines the item at the unloader/item source
-
 You may notice a lot of "unnecessary" variable declarations like
 ```
-items = @unit.totalItems
-unitCap = @unit.itemCapacity
-if items < unitCap
+arcx = arc1.shootX
+arcy = arc1.shootY
+isNear = within(arcx, arcy, apprRange)
 ```
 instead they can be replaced with
 ```
-if @unit.totalItems < @unit.itemCapacity
+isNear = within(arc1.shootX, arc1.shootY, apprRange)
 ```
 However, in the compiled code you will then notice several unnamed __temp* variables. It is not very easy to track which one is responsible for what during debugging. Therefore, all possible variables are declared to make debugging easier, since this does not affect performance in any way.
 
