@@ -1,4 +1,4 @@
-print("[pink]Vela AI (auto Attack logIc)\n[]Click switch to toggle [red]attack[]/[green]idle[].\nUnits attack enemy, approach to cores and spawns, repair at nearest building if not too far. You can control units in arc turret\n\n by [orange]testt []in 24-02-26\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.6[]\n\nUnits ")
+print("[pink]Vela Attack logIc[]\nPress switch to toggle [red]attack[]/[green]idle[].\nRepairs at repair turrets within 200 blocks with power>0. You can take control of units in the Arc turret and change bomb type in the sorter\n\n by [orange]testt []in 24-02-29\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.7[]\n\nUnits ")
 isEnabled = switch1.enabled
 if isEnabled == 0
     print("are [green]Idle")
@@ -8,21 +8,18 @@ end
 print("\n\n[]Source code with comments: [cyan]github.com/limonovthesecond2/vela-ai")
 printflush(message1)
 
-bomb = sorter1.config
-if bomb != null
-    i = 0
-    while true
-        block = getlink(i)
-        blockType = block.type
-        case blockType
-            when @unloader, @item-source then
-                block.config = bomb
-        end
-        i += 1
-        if i >= @links
-            end()
-        end
+i = 0
+do
+    isControll = arc1.controlled
+    if isControll == 2
+        switch1.enabled = 1
     end
-else
-    wait(1)    // No need to do the above code often
-end
+    block = getlink(i)
+    blockType = block.type
+    case blockType
+        when @unloader, @item-source then
+            bomb = sorter1.config
+            block.config = bomb
+    end
+    i += 1
+loop while i < @links
