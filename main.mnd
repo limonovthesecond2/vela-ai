@@ -1,7 +1,7 @@
-const defendRange = 18    // Defend range
-const repAppr = 2    // Repair approach distance
+const defendRange = 20    // Defend range
+const repAppr = 4    // Repair approach distance
 const repNotFar = 200    // Max repair distance
-const vaultRange = 5    // Vault approach distance
+const vaultRange = 6    // Vault approach distance
 const idleRange = 15    // Idle distance
 const dangEnemy = 600    // Min hp of a dangerous enemy
 
@@ -14,10 +14,10 @@ do
     isDead = @unit.dead
 loop while isDead == 1    // Check if the unit is alive to make sure the variable values ​​are correct
 
-maxRepHp = maxHp * 0.9    // Max hp to repair
-minRepHp = maxHp * 0.5    // Min hp to repair
-apprRange = unitRange * 1.2    // Approach range for manual control
-attackRange = unitRange * 0.8    // Closer than unitRange to not lose enemy when shooting
+maxRepHp = maxHp * 0.95    // Max hp to repair
+minRepHp = maxHp * 0.55    // Min hp to repair
+arcRange = unitRange * 1.2    // Approach range for manual control
+attackRange = unitRange * 0.8    // Attack range to lose less enemy when shooting
 unitApprRange = unitRange * 0.5    // Distance to approach the enemy if can't land
 
 while true
@@ -38,8 +38,8 @@ while true
                     if hp <= minRepHp
                         isNotFar = within(repx, repy, repNotFar)
                         if isNotFar == 1
-                            boost(1)
                             approach(repx, repy, repAppr)
+                            boost(1)
                             continue
                         end
                     end
@@ -159,10 +159,10 @@ while true
     end
 
     isControll = arc1.controlled
-    if isControll == 2    // Manual controll
+    if isControll == 2    // Manual control
         arcx = arc1.shootX
         arcy = arc1.shootY
-        isNear = within(arcx, arcy, apprRange)
+        isNear = within(arcx, arcy, arcRange)
         if isNear == 1
             isShooting = arc1.shooting
             if isShooting == 1
@@ -171,7 +171,6 @@ while true
                 isBoosted = @unit.boosting
                 if isBoosted == 1
                     move(arcx, arcy)
-                    flag(1)
                 else
                     approach(arcx, arcy, attackRange)
                 end
