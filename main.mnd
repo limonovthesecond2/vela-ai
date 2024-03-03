@@ -18,7 +18,7 @@ maxRepHp = maxHp * 0.95    // Max hp to repair
 minRepHp = maxHp * 0.55    // Min hp to repair
 arcRange = unitRange * 1.2    // Approach range for manual control
 attackRange = unitRange * 0.8    // Attack range to lose less enemy when shooting
-unitApprRange = unitRange * 0.5    // Distance to approach the enemy if can't land
+unitApprRange = unitRange * 0.4    // Distance to approach the enemy if can't land
 
 while true
     ubind(UNIT)
@@ -158,8 +158,8 @@ while true
         end
     end
 
-    isControll = arc1.controlled
-    if isControll == 2    // Manual control
+    controlled = arc1.controlled
+    if controlled == 2    // Manual control
         arcx = arc1.shootX
         arcy = arc1.shootY
         isNear = within(arcx, arcy, arcRange)

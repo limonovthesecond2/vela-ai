@@ -1,4 +1,4 @@
-print("[pink]Vela Attack logIc[]\nPress switch to toggle [red]attack[]/[green]idle[].\nUnits are repaired at rep turrets within 200 with power>0. You can take control of units in the Arc turret and change bomb type in the sorter\n\n by [orange]testt []in 24-03-02\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.7[]\n\nUnits ")
+print("[pink]Vela Attack logIc[]\nPress switch to toggle [red]attack[]/[green]idle[].\nUnits are repaired at rep turrets within 200 with power>0. You can take control of units in the Arc turret and change bomb type in the sorter\n\n by [orange]testt []in 24-03-03\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.7[]\n\nUnits ")
 isEnabled = switch1.enabled
 if isEnabled == 0
     print("are [green]Idle")
@@ -10,16 +10,16 @@ printflush(message1)
 
 i = 0
 do
-    isControll = arc1.controlled
-    if isControll == 2
+    controlled = arc1.controlled
+    if controlled == 2
         switch1.enabled = 1
     end
     block = getlink(i)
     blockType = block.type
     case blockType
         when @unloader, @item-source then
-            bomb = sorter1.config
-            block.config = bomb
+            bombType = sorter1.config
+            block.config = bombType
     end
     i += 1
 loop while i < @links
