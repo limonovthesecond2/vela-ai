@@ -14,15 +14,21 @@ Once the file is downloaded, go to Mindustry. Open `Schematics` (from the main w
 ## Development
 The source code is written in [MindCode](https://github.com/cardillan/mindcode), so, please, read the [documentation](https://github.com/cardillan/mindcode/blob/main/doc/syntax/SYNTAX.markdown) first if you are not already familiar with it. For syntax highlighting, you can use [VSCode](https://code.visualstudio.com/) with [Mindcode](https://marketplace.visualstudio.com/items?itemName=TomSchi.mindcode) extension.
 
+The scheme consists of 2 `Main` hyperprocessors and 1 `Message` microprocessor.
+
+Their purpose:
+- `Main`: All logic related to units, including repair, bomb loading, attack, approach etc
+- `Message`: Writes messages, defines the item in the unloader/item source and enables the switch if the player controls the arc turret
+
 You may notice a lot of "unnecessary" variable declarations like
 ```
 arcx = arc1.shootX
 arcy = arc1.shootY
-isNear = within(arcx, arcy, apprRange)
+isNear = within(arcx, arcy, arcRange)
 ```
 instead they can be replaced with
 ```
-isNear = within(arc1.shootX, arc1.shootY, apprRange)
+isNear = within(arc1.shootX, arc1.shootY, arcRange)
 ```
 However, in the compiled code you will then notice several unnamed __temp* variables. It is not very easy to track which one is responsible for what during debugging. Therefore, all possible variables are declared to make debugging easier, since this does not affect performance in any way.
 
