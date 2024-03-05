@@ -27,8 +27,8 @@ while true
         hp = @unit.health
         if hp < maxRepHp
             ulocate(building, repair, false, repx, repy, building)
-            power = building.totalPower
-            if power > 0
+            repPower = building.totalPower
+            if repPower > 0
                 isNear = within(repx, repy, defendRange)
                 if isNear == 1
                     approach(repx, repy, repAppr)
