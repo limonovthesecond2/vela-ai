@@ -11,6 +11,9 @@ The easiest way is to download `vela-ai-scheme.msch` and import it from mindustr
 
 Once the file is downloaded, go to Mindustry. Open `Schematics` (from the main window `Database` then `Schematics`), click `Import Schematics`, `Import File` and select the downloaded file. Now you can use this schematic from your `Schematics`.
 
+> [!NOTE]
+> There is also a scheme for the Eradication Rapid server named [vela-ai-scheme-rapid.msch](https://github.com/limonovthesecond2/vela-ai/blob/main/vela-ai-scheme-rapid.msch)
+
 ## Development
 The source code is written in [MindCode](https://github.com/cardillan/mindcode), so, please, read the [documentation](https://github.com/cardillan/mindcode/blob/main/doc/syntax/SYNTAX.markdown) first if you are not already familiar with it. For syntax highlighting, you can use [VSCode](https://code.visualstudio.com/) with [Mindcode](https://marketplace.visualstudio.com/items?itemName=TomSchi.mindcode) extension.
 
