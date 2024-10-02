@@ -1,0 +1,190 @@
+set unit @vela
+print "Possible units: Vela, Quasar, Pulsar and Nova"
+set repAppr 4
+print "Approach distance for repair"
+set maxRepDist 200
+print "Maximum distance for repair"
+set vaultAppr 6
+print "Approach distance to vault"
+set idleAppr 15
+print "Approach distance when logic is idle"
+set defDist 20
+print "Distance for defending during repairs, loading bombs or idle"
+set dangEnemy 600
+print "Minimum health of a dangerous enemy"
+ubind unit
+sensor maxHp @unit @maxHealth
+sensor unitRange @unit @range
+sensor unitCap @unit @itemCapacity
+sensor isDead @unit @dead
+jump 14 equal isDead 1
+op mul minRepHp maxHp 0.55
+print "Minimum health for repair"
+op mul maxRepHp maxHp 0.95
+print "Maximum health for repair"
+op mul enemyAppr unitRange 0.4
+print "Approach distance to the enemy if the unit was unable to land"
+op mul attackAppr unitRange 0.8
+print "Attack distance to lose fewer enemies when shooting"
+op mul arcDist unitRange 1.2
+print "Approach distance for manual fire control"
+ubind unit
+sensor isKamikaze @unit @flag
+jump 60 notEqual isKamikaze 0
+sensor hp @unit @health
+jump 60 greaterThanEq hp maxRepHp
+ulocate building repair false @copper repX repY 0 repTurr
+sensor repPower repTurr @totalPower
+jump 60 lessThanEq repPower 0
+ucontrol within repX repY defDist isNear 0
+jump 54 notEqual isNear 1
+ucontrol approach repX repY repAppr 0 0
+uradar enemy any any distance 0 1 __fn1_enUnit
+jump 46 equal __fn1_enUnit null
+ucontrol boost 0 0 0 0 0
+ucontrol targetp __fn1_enUnit 1 0 0 0
+jump 30 always 0 0
+ulocate damaged core true @copper __fn1_outX __fn1_outY 0 0
+ucontrol within __fn1_outX __fn1_outY unitRange __fn1_isNear 0
+jump 52 notEqual __fn1_isNear 1
+ucontrol boost 0 0 0 0 0
+ucontrol target __fn1_outX __fn1_outY 1 0 0
+jump 30 always 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+jump 60 greaterThan hp minRepHp
+ucontrol within repX repY maxRepDist isRepNear 0
+jump 60 notEqual isRepNear 1
+ucontrol approach repX repY repAppr 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+sensor items @unit @totalItems
+jump 86 greaterThanEq items unitCap
+sensor bombType sorter1 @config
+jump 86 equal bombType null
+jump 86 equal vault1 null
+sensor vaultX vault1 @x
+sensor vaultY vault1 @y
+ucontrol approach vaultX vaultY vaultAppr 0 0
+ucontrol within vaultX vaultY defDist isNear 0
+jump 84 notEqual isNear 1
+ucontrol itemTake vault1 bombType unitCap 0 0
+uradar enemy any any distance 0 1 __fn1_enUnit
+jump 76 equal __fn1_enUnit null
+ucontrol boost 0 0 0 0 0
+ucontrol targetp __fn1_enUnit 1 0 0 0
+jump 30 always 0 0
+ulocate damaged core true @copper __fn1_outX __fn1_outY 0 0
+ucontrol within __fn1_outX __fn1_outY unitRange __fn1_isNear 0
+jump 82 notEqual __fn1_isNear 1
+ucontrol boost 0 0 0 0 0
+ucontrol target __fn1_outX __fn1_outY 1 0 0
+jump 30 always 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+ucontrol flag 0 0 0 0 0
+sensor isEnabled switch1 @enabled
+jump 113 notEqual isEnabled 0
+jump 93 notEqual vault1 null
+set idleX @thisx
+set idleY @thisy
+jump 95 always 0 0
+sensor idleX vault1 @x
+sensor idleY vault1 @y
+ucontrol approach idleX idleY idleAppr 0 0
+ucontrol within idleX idleY defDist isNear 0
+jump 111 notEqual isNear 1
+uradar enemy any any distance 0 1 __fn1_enUnit
+jump 103 equal __fn1_enUnit null
+ucontrol boost 0 0 0 0 0
+ucontrol targetp __fn1_enUnit 1 0 0 0
+jump 30 always 0 0
+ulocate damaged core true @copper __fn1_outX __fn1_outY 0 0
+ucontrol within __fn1_outX __fn1_outY unitRange __fn1_isNear 0
+jump 109 notEqual __fn1_isNear 1
+ucontrol boost 0 0 0 0 0
+ucontrol target __fn1_outX __fn1_outY 1 0 0
+jump 30 always 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+uradar enemy any any maxHealth 0 1 enUnit
+jump 127 equal enUnit null
+sensor enMaxHp enUnit @maxHealth
+jump 127 lessThan enMaxHp dangEnemy
+ucontrol boost 0 0 0 0 0
+ucontrol targetp enUnit 1 0 0 0
+sensor enemyX enUnit @x
+sensor enemyY enUnit @y
+sensor isBoosted @unit @boosting
+jump 125 notEqual isBoosted 1
+ucontrol approach enemyX enemyY enemyAppr 0 0
+jump 30 always 0 0
+ucontrol approach enemyX enemyY attackAppr 0 0
+jump 30 always 0 0
+ulocate building turret true @copper turretX turretY enTurr 0
+jump 140 notEqual enTurr 1
+ucontrol within turretX turretY unitRange isNear 0
+jump 140 notEqual isNear 1
+ucontrol boost 0 0 0 0 0
+ucontrol target turretX turretY 1 0 0
+sensor __fn0_isBoosted @unit @boosting
+jump 138 notEqual __fn0_isBoosted 1
+ucontrol move turretX turretY 0 0 0
+ucontrol flag 1 0 0 0 0
+jump 30 always 0 0
+ucontrol approach turretX turretY unitRange 0 0
+jump 30 always 0 0
+ulocate building core true @copper coreX coreY 0 0
+ucontrol within coreX coreY unitRange isNear 0
+jump 152 notEqual isNear 1
+ucontrol boost 0 0 0 0 0
+ucontrol target coreX coreY 1 0 0
+sensor __fn0_isBoosted @unit @boosting
+jump 150 notEqual __fn0_isBoosted 1
+ucontrol move coreX coreY 0 0 0
+ucontrol flag 1 0 0 0 0
+jump 30 always 0 0
+ucontrol approach coreX coreY unitRange 0 0
+jump 30 always 0 0
+ulocate building generator true @copper genX genY enGener 0
+jump 165 notEqual enGener 1
+ucontrol within genX genY unitRange isNear 0
+jump 165 notEqual isNear 1
+ucontrol boost 0 0 0 0 0
+ucontrol target genX genY 1 0 0
+sensor __fn0_isBoosted @unit @boosting
+jump 163 notEqual __fn0_isBoosted 1
+ucontrol move genX genY 0 0 0
+ucontrol flag 1 0 0 0 0
+jump 30 always 0 0
+ucontrol approach genX genY unitRange 0 0
+jump 30 always 0 0
+sensor controlled arc1 @controlled
+jump 184 notEqual controlled 2
+sensor arcX arc1 @shootX
+sensor arcY arc1 @shootY
+ucontrol within arcX arcY arcDist isNear 0
+jump 181 notEqual isNear 1
+sensor isShooting arc1 @shooting
+jump 181 notEqual isShooting 1
+ucontrol boost 0 0 0 0 0
+ucontrol target arcX arcY 1 0 0
+sensor isBoosted @unit @boosting
+jump 179 notEqual isBoosted 1
+ucontrol move arcX arcY 0 0 0
+jump 30 always 0 0
+ucontrol approach arcX arcY attackAppr 0 0
+jump 30 always 0 0
+ucontrol boost 1 0 0 0 0
+ucontrol move arcX arcY 0 0 0
+jump 30 always 0 0
+ucontrol autoPathfind 0 0 0 0 0
+ucontrol boost 1 0 0 0 0
+jump 30 always 0 0
+end
+print "Made by testt in 24-10-02. Source code: github.com/limonovthesecond2/vela-ai"
+print "Compiled by Mindcode - github.com/cardillan/mindcode"

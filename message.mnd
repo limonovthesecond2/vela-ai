@@ -1,25 +1,27 @@
-print("[pink]Vela Attack logIc[]\nPress switch to toggle [red]attack[]/[green]idle[].\nUnits are repaired at rep turrets within 200 with power>0. You can take control of units in the Arc turret and change bomb type in the sorter\n\n by [orange]testt []in 24-03-03\n inspired by [orange]|DE|Пастаф\n [][cyan]ver. 2.7[]\n\nUnits ")
-isEnabled = switch1.enabled
-if isEnabled == 0
-    print("are [green]Idle")
-else
-    print("[red]Attack")
-end
-print("\n\n[]Source code with comments: [cyan]github.com/limonovthesecond2/vela-ai")
-printflush(message1)
+#set target = ML7AS;    // Mindcode Logic version 7 (revision A) standard processors
 
-i = 0
+print("[pink]Vela Attack logIc[]\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 200 blocks with power > 0. You can control units through the [orange]arc[] turret and change the bomb type in the [orange]sorter[]\n\n by [orange]testt[] in 24-10-02\n\nUnits ");
+isEnabled = switch1.enabled;
+if isEnabled == 0
+    print("are [green]Idle");
+else
+    print("[red]Attack");
+end;
+print("\n\n[]Source code with comments: [cyan]github.com/limonovthesecond2/vela-ai");
+printflush(message1);
+
+i = 0;
 do
-    controlled = arc1.controlled
+    controlled = arc1.controlled;
     if controlled == 2
-        switch1.enabled = 1
-    end
-    block = getlink(i)
-    blockType = block.type
+        switch1.enabled = 1;
+    end;
+    block = getlink(i);
+    blockType = block.type;
     case blockType
         when @unloader, @item-source then
-            bombType = sorter1.config
-            block.config = bombType
-    end
-    i += 1
-loop while i < @links
+            bombType = sorter1.config;
+            block.config = bombType;
+    end;
+    i += 1;
+loop while i < @links;
