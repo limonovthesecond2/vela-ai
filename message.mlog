@@ -1,10 +1,10 @@
-print "[pink]Vela Attack logIc[]\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 200 blocks with power > 0. You can control units through the [orange]arc[] turret and change the bomb type in the [orange]sorter[]\n\n by [orange]testt[] in 24-10-02\n\nUnits "
+print "[pink]Vela Attack logIc[]\nUnits "
 sensor isEnabled switch1 @enabled
 jump 5 notEqual isEnabled 0
-print "are [green]Idle"
+print "are [green]idle[]"
 jump 6 always 0 0
-print "[red]Attack"
-print "\n\n[]Source code with comments: [cyan]github.com/limonovthesecond2/vela-ai"
+print "[red]attack[]"
+print "\n\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 200 blocks with power > 0. You can control units via the [orange]arc turret[] and change the bomb type in the [orange]sorter[]\n\n made by [orange]testt[] in 24-10-17\n\nSource code: [cyan]github.com/limonovthesecond2/vela-ai"
 printflush message1
 set i 0
 sensor controlled arc1 @controlled
@@ -18,6 +18,3 @@ sensor bombType sorter1 @config
 control config block bombType 0 0 0
 op add i i 1
 jump 9 lessThan i @links
-end
-print "Made by testt in 24-10-02. Source code: github.com/limonovthesecond2/vela-ai"
-print "Compiled by Mindcode - github.com/cardillan/mindcode"

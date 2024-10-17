@@ -1,13 +1,13 @@
 set unit @vela
 print "Possible units: Vela, Quasar, Pulsar and Nova"
 set repAppr 4
-print "Approach distance for repair"
+print "Approach distance to repair turret"
 set maxRepDist 200
-print "Maximum distance for repair"
+print "Maximum distance to repair turret"
 set vaultAppr 6
 print "Approach distance to vault"
 set idleAppr 15
-print "Approach distance when logic is idle"
+print "Approach distance to vault when logic is idle"
 set defDist 20
 print "Distance for defending during repairs, loading bombs or idle"
 set dangEnemy 600
@@ -186,5 +186,4 @@ ucontrol autoPathfind 0 0 0 0 0
 ucontrol boost 1 0 0 0 0
 jump 30 always 0 0
 end
-print "Made by testt in 24-10-02. Source code: github.com/limonovthesecond2/vela-ai"
 print "Compiled by Mindcode - github.com/cardillan/mindcode"

@@ -1,20 +1,13 @@
 #set target = ML7AS;    // Mindcode Logic version 7 (revision A) standard processors
-#set remarks = active;    // Remarks are included in the compiled code and are executed
+#set remarks = active;    // Remarks (///) are included in the compiled code and are executed
 
-param unit = @vela;
-remark("Possible units: Vela, Quasar, Pulsar and Nova");
-param repAppr = 4;
-remark("Approach distance for repair");
-param maxRepDist = 200;
-remark("Maximum distance for repair");
-param vaultAppr = 6;
-remark("Approach distance to vault");
-param idleAppr = 15;
-remark("Approach distance when logic is idle");
-param defDist = 20;
-remark("Distance for defending during repairs, loading bombs or idle");
-param dangEnemy = 600;
-remark("Minimum health of a dangerous enemy");
+param unit = @vela;    /// Possible units: Vela, Quasar, Pulsar and Nova
+param repAppr = 4;    /// Approach distance to repair turret
+param maxRepDist = 200;    /// Maximum distance to repair turret
+param vaultAppr = 6;    /// Approach distance to vault
+param idleAppr = 15;    /// Approach distance to vault when logic is idle
+param defDist = 20;    /// Distance for defending during repairs, loading bombs or idle
+param dangEnemy = 600;    /// Minimum health of a dangerous enemy
 
 do
     ubind(unit);
@@ -24,39 +17,32 @@ do
     isDead = @unit.dead;
 loop while isDead == 1;    // Check if the unit is alive to make sure the variable values ​​are correct
 
-minRepHp = maxHp * 0.55;
-remark("Minimum health for repair");
-maxRepHp = maxHp * 0.95;
-remark("Maximum health for repair");
-enemyAppr = unitRange * 0.4;
-remark("Approach distance to the enemy if the unit was unable to land");
-attackAppr = unitRange * 0.8;
-remark("Attack distance to lose fewer enemies when shooting");
-arcDist = unitRange * 1.2;
-remark("Approach distance for manual fire control");
+minRepHp = maxHp * 0.55;    /// Minimum health for repair
+maxRepHp = maxHp * 0.95;    /// Maximum health for repair
+enemyAppr = unitRange * 0.4;    /// Approach distance to the enemy if the unit was unable to land
+attackAppr = unitRange * 0.8;    /// Attack distance to lose fewer enemies when shooting
+arcDist = unitRange * 1.2;    /// Approach distance for manual fire control
 
-while true
+while true do
     ubind(unit);
     isKamikaze = @unit.flag;
-    if isKamikaze == 0    // Unit repair logic if flag is not equal to 1
+    if isKamikaze == 0 then    // Repair logic if @unit flag is equal to 0
         hp = @unit.health;
-        if hp < maxRepHp
+        if hp < maxRepHp then
             repTurr = ulocate(building, repair, false, repX, repY);
             repPower = repTurr.totalPower;
-            if repPower > 0
+            if repPower > 0 then
                 isNear = within(repX, repY, defDist);
-                if isNear == 1
+                if isNear == 1 then
                     approach(repX, repY, repAppr);
                     autoDef(unitRange);
                     continue;
-                else
-                    if hp <= minRepHp
-                        isRepNear = within(repX, repY, maxRepDist);
-                        if isRepNear == 1
-                            approach(repX, repY, repAppr);
-                            boost(1);
-                            continue;
-                        end;
+                elsif hp <= minRepHp then
+                    isRepNear = within(repX, repY, maxRepDist);
+                    if isRepNear == 1 then
+                        approach(repX, repY, repAppr);
+                        boost(1);
+                        continue;
                     end;
                 end;
             end;
@@ -64,15 +50,15 @@ while true
     end;
 
     items = @unit.totalItems;
-    if items < unitCap    // Bomb loading logic
+    if items < unitCap then    // Bomb loading logic
         bombType = sorter1.config;
-        if bombType != null
-            if vault1 != null
+        if bombType != null then
+            if vault1 != null then
                 vaultX = vault1.x;
                 vaultY = vault1.y;
                 approach(vaultX, vaultY, vaultAppr);
                 isNear = within(vaultX, vaultY, defDist);
-                if isNear == 1
+                if isNear == 1 then
                     itemTake(vault1, bombType, unitCap);
                     autoDef(unitRange);
                 else
@@ -85,8 +71,8 @@ while true
 
     flag(0);    // Reset flag
     isEnabled = switch1.enabled;
-    if isEnabled == 0    // Idle logic
-        if vault1 == null    // If there is no vault, approach to this processor
+    if isEnabled == 0 then    // Idle logic
+        if vault1 == null then    // If there is no vault, approach to this processor
             idleX = @this.x;
             idleY = @this.y;
         else
@@ -95,7 +81,7 @@ while true
         end;
         approach(idleX, idleY, idleAppr);
         isNear = within(idleX, idleY, defDist);
-        if isNear == 1
+        if isNear == 1 then
             autoDef(unitRange);
         else
             boost(1);
@@ -105,13 +91,13 @@ while true
 
     def autoDef(unitRange)
         enUnit = uradar(enemy, any, any, distance, 1);
-        if enUnit != null
+        if enUnit != null then
             boost(0);
             targetp(enUnit, 1);
         else
             ulocate(damaged, outX, outY);
             isNear = within(outX, outY, unitRange);
-            if isNear == 1
+            if isNear == 1 then
                 boost(0);
                 target(outX, outY, 1);
             else
@@ -122,15 +108,15 @@ while true
 
     // Attack logic
     enUnit = uradar(enemy, any, any, maxHealth, 1);
-    if enUnit != null
+    if enUnit != null then
         enMaxHp = enUnit.maxHealth;
-        if enMaxHp >= dangEnemy
+        if enMaxHp >= dangEnemy then
             boost(0);
             targetp(enUnit, 1);
             enemyX = enUnit.x;
             enemyY = enUnit.y;
             isBoosted = @unit.boosting;
-            if isBoosted == 1
+            if isBoosted == 1 then
                 approach(enemyX, enemyY, enemyAppr);
             else
                 approach(enemyX, enemyY, attackAppr);
@@ -139,23 +125,23 @@ while true
         end;
     end;
     ulocate(building, turret, true, turretX, turretY, enTurr);
-    if enTurr == 1
+    if enTurr == 1 then
         isNear = within(turretX, turretY, unitRange);
-        if isNear == 1
+        if isNear == 1 then
             autoAttack(turretX, turretY, unitRange);
             continue;
         end;
     end;
     ulocate(building, core, true, coreX, coreY);
     isNear = within(coreX, coreY, unitRange);
-    if isNear == 1
+    if isNear == 1 then
         autoAttack(coreX, coreY, unitRange);
         continue;
     end;
     ulocate(building, generator, true, genX, genY, enGener);
-    if enGener == 1
+    if enGener == 1 then
         isNear = within(genX, genY, unitRange);
-        if isNear == 1
+        if isNear == 1 then
             autoAttack(genX, genY, unitRange);
             continue;
         end;
@@ -165,7 +151,7 @@ while true
         boost(0);
         target(outX, outY, 1);
         isBoosted = @unit.boosting;
-        if isBoosted == 1    // Kamikaze attack if can't land
+        if isBoosted == 1 then    // Kamikaze attack if can't land
             move(outX, outY);
             flag(1);
         else
@@ -174,17 +160,17 @@ while true
     end;
 
     controlled = arc1.controlled;
-    if controlled == 2    // Manual control
+    if controlled == 2 then    // Manual control
         arcX = arc1.shootX;
         arcY = arc1.shootY;
         isNear = within(arcX, arcY, arcDist);
-        if isNear == 1
+        if isNear == 1 then
             isShooting = arc1.shooting;
-            if isShooting == 1
+            if isShooting == 1 then
                 boost(0);
                 target(arcX, arcY, 1);
                 isBoosted = @unit.boosting;
-                if isBoosted == 1
+                if isBoosted == 1 then
                     move(arcX, arcY);
                 else
                     approach(arcX, arcY, attackAppr);
