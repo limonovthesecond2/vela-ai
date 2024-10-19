@@ -89,23 +89,6 @@ while true do
         continue;
     end;
 
-    def autoDef(unitRange)
-        enUnit = uradar(enemy, any, any, distance, 1);
-        if enUnit != null then
-            boost(0);
-            targetp(enUnit, 1);
-        else
-            ulocate(damaged, outX, outY);
-            isNear = within(outX, outY, unitRange);
-            if isNear == 1 then
-                boost(0);
-                target(outX, outY, 1);
-            else
-                boost(1);    // If there are no targets nearby, fly instead of swim
-            end;
-        end;
-    end;
-
     // Attack logic
     enUnit = uradar(enemy, any, any, maxHealth, 1);
     if enUnit != null then
@@ -128,34 +111,22 @@ while true do
     if enTurr == 1 then
         isNear = within(turretX, turretY, unitRange);
         if isNear == 1 then
-            autoAttack(turretX, turretY, unitRange);
+            attackBuilding(turretX, turretY, unitRange);
             continue;
         end;
     end;
     ulocate(building, core, true, coreX, coreY);
     isNear = within(coreX, coreY, unitRange);
     if isNear == 1 then
-        autoAttack(coreX, coreY, unitRange);
+        attackBuilding(coreX, coreY, unitRange);
         continue;
     end;
     ulocate(building, generator, true, genX, genY, enGener);
     if enGener == 1 then
         isNear = within(genX, genY, unitRange);
         if isNear == 1 then
-            autoAttack(genX, genY, unitRange);
+            attackBuilding(genX, genY, unitRange);
             continue;
-        end;
-    end;
-
-    def autoAttack(outX, outY, unitRange)
-        boost(0);
-        target(outX, outY, 1);
-        isBoosted = @unit.boosting;
-        if isBoosted == 1 then    // Kamikaze attack if can't land
-            move(outX, outY);
-            flag(1);
-        else
-            approach(outX, outY, unitRange);
         end;
     end;
 
@@ -185,4 +156,35 @@ while true do
 
     autoPathfind();
     boost(1);
+end;
+
+// Automatic defense against enemy units and repair of neighboring allied buildings
+def autoDef(unitRange)
+    enUnit = uradar(enemy, any, any, distance, 1);
+    if enUnit != null then
+        boost(0);
+        targetp(enUnit, 1);
+    else
+        ulocate(damaged, outX, outY);
+        isNear = within(outX, outY, unitRange);
+        if isNear == 1 then
+            boost(0);
+            target(outX, outY, 1);
+        else
+            boost(1);    // If there are no targets nearby, fly instead of swim
+        end;
+    end;
+end;
+
+// Attack the enemy building
+def attackBuilding(outX, outY, unitRange)
+    boost(0);
+    target(outX, outY, 1);
+    isBoosted = @unit.boosting;
+    if isBoosted == 1 then    // Kamikaze attack if can't land
+        move(outX, outY);
+        flag(1);
+    else
+        approach(outX, outY, unitRange);
+    end;
 end;
