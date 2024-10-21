@@ -29,8 +29,8 @@ print "Attack distance to lose fewer enemies when shooting"
 op mul arcDist unitRange 1.2
 print "Approach distance for manual fire control"
 ubind unit
-sensor isKamikaze @unit @flag
-jump 60 notEqual isKamikaze 0
+sensor unitFlag @unit @flag
+jump 60 notEqual unitFlag 0
 sensor hp @unit @health
 jump 60 greaterThanEq hp maxRepHp
 ulocate building repair false @copper repX repY 0 repTurr
