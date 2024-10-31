@@ -5,7 +5,7 @@ print "Approach distance to repair turret"
 set maxRepDist 200
 print "Maximum distance to repair turret"
 set vaultAppr 6
-print "Approach distance to vault"
+print "Approach distance to vault during bomb loading"
 set idleAppr 15
 print "Approach distance to vault when logic is idle"
 set defDist 20

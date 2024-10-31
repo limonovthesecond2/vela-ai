@@ -4,7 +4,7 @@
 param unit = @vela;    /// Possible units: Vela, Quasar, Pulsar and Nova
 param repAppr = 4;    /// Approach distance to repair turret
 param maxRepDist = 200;    /// Maximum distance to repair turret
-param vaultAppr = 6;    /// Approach distance to vault
+param vaultAppr = 6;    /// Approach distance to vault during bomb loading
 param idleAppr = 15;    /// Approach distance to vault when logic is idle
 param defDist = 20;    /// Defense range during repairs, bomb loading and idle
 
