@@ -9,25 +9,25 @@ print "Approach distance to vault"
 set idleAppr 15
 print "Approach distance to vault when logic is idle"
 set defDist 20
-print "Distance for defending during repairs, loading bombs or idle"
-set dangEnemy 600
-print "Minimum health of a dangerous enemy"
+print "Defense range during repairs, bomb loading and idle"
 ubind unit
 sensor maxHp @unit @maxHealth
 sensor unitRange @unit @range
 sensor unitCap @unit @itemCapacity
 sensor isDead @unit @dead
-jump 14 equal isDead 1
+jump 12 equal isDead 1
 op mul minRepHp maxHp 0.55
 print "Minimum health for repair"
-op mul maxRepHp maxHp 0.95
+op mul maxRepHp maxHp 0.98
 print "Maximum health for repair"
-op mul enemyAppr unitRange 0.4
-print "Approach distance to the enemy if the unit was unable to land"
-op mul attackAppr unitRange 0.8
-print "Attack distance to lose fewer enemies when shooting"
+op mul dangEnemy maxHp 0.068
+print "Minimum health of a dangerous enemy"
+op mul enUnitAppr unitRange 0.9
+print "Approach distance for attacking enemy units"
+op mul enBuildDist unitRange 1.5
+print "Attack range to enemy buildings"
 op mul arcDist unitRange 1.2
-print "Approach distance for manual fire control"
+print "Attack range in manual control mode"
 ubind unit
 sensor unitFlag @unit @flag
 jump 60 notEqual unitFlag 0
@@ -112,72 +112,68 @@ jump 30 always 0 0
 ucontrol boost 1 0 0 0 0
 jump 30 always 0 0
 uradar enemy any any maxHealth 0 1 enUnit
-jump 127 equal enUnit null
+jump 123 equal enUnit null
 sensor enMaxHp enUnit @maxHealth
-jump 127 lessThan enMaxHp dangEnemy
+jump 123 lessThan enMaxHp dangEnemy
 ucontrol boost 0 0 0 0 0
 ucontrol targetp enUnit 1 0 0 0
 sensor enemyX enUnit @x
 sensor enemyY enUnit @y
-sensor isBoosted @unit @boosting
-jump 125 notEqual isBoosted 1
-ucontrol approach enemyX enemyY enemyAppr 0 0
-jump 30 always 0 0
-ucontrol approach enemyX enemyY attackAppr 0 0
+ucontrol approach enemyX enemyY enUnitAppr 0 0
 jump 30 always 0 0
 ulocate building turret true @copper turretX turretY enTurr 0
-jump 140 notEqual enTurr 1
-ucontrol within turretX turretY unitRange isNear 0
-jump 140 notEqual isNear 1
+jump 136 notEqual enTurr 1
+ucontrol within turretX turretY enBuildDist isNear 0
+jump 136 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target turretX turretY 1 0 0
 sensor __fn0_isBoosted @unit @boosting
-jump 138 notEqual __fn0_isBoosted 1
+jump 134 notEqual __fn0_isBoosted 1
 ucontrol move turretX turretY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 30 always 0 0
 ucontrol approach turretX turretY unitRange 0 0
 jump 30 always 0 0
 ulocate building core true @copper coreX coreY 0 0
-ucontrol within coreX coreY unitRange isNear 0
-jump 152 notEqual isNear 1
+ucontrol within coreX coreY enBuildDist isNear 0
+jump 148 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target coreX coreY 1 0 0
 sensor __fn0_isBoosted @unit @boosting
-jump 150 notEqual __fn0_isBoosted 1
+jump 146 notEqual __fn0_isBoosted 1
 ucontrol move coreX coreY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 30 always 0 0
 ucontrol approach coreX coreY unitRange 0 0
 jump 30 always 0 0
 ulocate building generator true @copper genX genY enGener 0
-jump 165 notEqual enGener 1
-ucontrol within genX genY unitRange isNear 0
-jump 165 notEqual isNear 1
+jump 161 notEqual enGener 1
+ucontrol within genX genY enBuildDist isNear 0
+jump 161 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target genX genY 1 0 0
 sensor __fn0_isBoosted @unit @boosting
-jump 163 notEqual __fn0_isBoosted 1
+jump 159 notEqual __fn0_isBoosted 1
 ucontrol move genX genY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 30 always 0 0
 ucontrol approach genX genY unitRange 0 0
 jump 30 always 0 0
 sensor controlled arc1 @controlled
-jump 184 notEqual controlled 2
+jump 180 notEqual controlled 2
 sensor arcX arc1 @shootX
 sensor arcY arc1 @shootY
 ucontrol within arcX arcY arcDist isNear 0
-jump 181 notEqual isNear 1
+jump 177 notEqual isNear 1
 sensor isShooting arc1 @shooting
-jump 181 notEqual isShooting 1
+jump 177 notEqual isShooting 1
 ucontrol boost 0 0 0 0 0
 ucontrol target arcX arcY 1 0 0
 sensor isBoosted @unit @boosting
-jump 179 notEqual isBoosted 1
+jump 175 notEqual isBoosted 1
 ucontrol move arcX arcY 0 0 0
 jump 30 always 0 0
-ucontrol approach arcX arcY attackAppr 0 0
+ucontrol approach arcX arcY enUnitAppr 0 0
 jump 30 always 0 0
 ucontrol boost 1 0 0 0 0
 ucontrol move arcX arcY 0 0 0

@@ -3,9 +3,9 @@ sensor isEnabled switch1 @enabled
 jump 5 notEqual isEnabled 0
 print "are [green]idle[]"
 jump 6 always 0 0
-print "[red]attack[]"
+print "are [red]attacking[]"
 print "\n\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 200 blocks with power > 0. You can control units via the [orange]arc turret[] and change the bomb type in the [orange]sorter[]\n\n  made by [orange]testt[] in "
-print "2024-10-23\n\nSource code: [cyan]"
+print "2024-10-31\n\nSource code: [cyan]"
 print "github.com/limonovthesecond2/vela-ai"
 printflush message1
 set i 0

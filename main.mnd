@@ -6,8 +6,7 @@ param repAppr = 4;    /// Approach distance to repair turret
 param maxRepDist = 200;    /// Maximum distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault
 param idleAppr = 15;    /// Approach distance to vault when logic is idle
-param defDist = 20;    /// Distance for defending during repairs, loading bombs or idle
-param dangEnemy = 600;    /// Minimum health of a dangerous enemy
+param defDist = 20;    /// Defense range during repairs, bomb loading and idle
 
 do
     ubind(unit);
@@ -18,10 +17,11 @@ do
 loop while isDead == 1;    // Check if the unit is alive to make sure the variable values ​​are correct
 
 minRepHp = maxHp * 0.55;    /// Minimum health for repair
-maxRepHp = maxHp * 0.95;    /// Maximum health for repair
-enemyAppr = UNITRANGE * 0.4;    /// Approach distance to the enemy if the unit was unable to land
-attackAppr = UNITRANGE * 0.8;    /// Attack distance to lose fewer enemies when shooting
-arcDist = UNITRANGE * 1.2;    /// Approach distance for manual fire control
+maxRepHp = maxHp * 0.98;    /// Maximum health for repair
+dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
+enUnitAppr = UNITRANGE * 0.9;    /// Approach distance for attacking enemy units
+enBuildDist = UNITRANGE * 1.5;    /// Attack range to enemy buildings
+arcDist = UNITRANGE * 1.2;    /// Attack range in manual control mode
 
 while true do
     ubind(unit);
@@ -103,32 +103,27 @@ while true do
             targetp(enUnit, 1);
             enemyX = enUnit.x;
             enemyY = enUnit.y;
-            isBoosted = @unit.boosting;
-            if isBoosted == 1 then
-                approach(enemyX, enemyY, enemyAppr);
-            else
-                approach(enemyX, enemyY, attackAppr);
-            end;
+            approach(enemyX, enemyY, enUnitAppr);
             continue;
         end;
     end;
     ulocate(building, turret, true, turretX, turretY, enTurr);
     if enTurr == 1 then
-        isNear = within(turretX, turretY, UNITRANGE);
+        isNear = within(turretX, turretY, enBuildDist);
         if isNear == 1 then
             attackBuilding(turretX, turretY);
             continue;
         end;
     end;
     ulocate(building, core, true, coreX, coreY);
-    isNear = within(coreX, coreY, UNITRANGE);
+    isNear = within(coreX, coreY, enBuildDist);
     if isNear == 1 then
         attackBuilding(coreX, coreY);
         continue;
     end;
     ulocate(building, generator, true, genX, genY, enGener);
     if enGener == 1 then
-        isNear = within(genX, genY, UNITRANGE);
+        isNear = within(genX, genY, enBuildDist);
         if isNear == 1 then
             attackBuilding(genX, genY);
             continue;
@@ -150,7 +145,7 @@ while true do
                 if isBoosted == 1 then
                     move(arcX, arcY);
                 else
-                    approach(arcX, arcY, attackAppr);
+                    approach(arcX, arcY, enUnitAppr);
                 end;
                 continue;
             end;
