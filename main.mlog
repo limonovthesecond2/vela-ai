@@ -1,5 +1,5 @@
 set unit @vela
-print "Possible units: Vela, Quasar, Pulsar and Nova"
+print "Possible units: @vela, @quasar, @pulsar and @nova"
 set repAppr 4
 print "Approach distance to repair turret"
 set maxRepDist 200

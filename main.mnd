@@ -1,7 +1,7 @@
 #set target = ML7AS;    // Mindcode Logic version 7 (revision A) standard processors
 #set remarks = active;    // Remarks (///) are included in the compiled code and are executed
 
-param unit = @vela;    /// Possible units: Vela, Quasar, Pulsar and Nova
+param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
 param maxRepDist = 200;    /// Maximum distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault during bomb loading
