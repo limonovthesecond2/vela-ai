@@ -39,16 +39,16 @@ jump 60 lessThanEq repPower 0
 ucontrol within repX repY defDist isNear 0
 jump 54 notEqual isNear 1
 ucontrol approach repX repY repAppr 0 0
-uradar enemy any any distance 0 1 __fn1_enUnit
-jump 46 equal __fn1_enUnit null
+uradar enemy any any distance 0 1 __fn0_enUnit
+jump 46 equal __fn0_enUnit null
 ucontrol boost 0 0 0 0 0
-ucontrol targetp __fn1_enUnit 1 0 0 0
+ucontrol targetp __fn0_enUnit 1 0 0 0
 jump 30 always 0 0
-ulocate damaged core true @copper __fn1_outX __fn1_outY 0 0
-ucontrol within __fn1_outX __fn1_outY unitRange __fn1_isNear 0
-jump 52 notEqual __fn1_isNear 1
+ulocate damaged core true @copper __fn0_outX __fn0_outY 0 0
+ucontrol within __fn0_outX __fn0_outY unitRange __fn0_isNear 0
+jump 52 notEqual __fn0_isNear 1
 ucontrol boost 0 0 0 0 0
-ucontrol target __fn1_outX __fn1_outY 1 0 0
+ucontrol target __fn0_outX __fn0_outY 1 0 0
 jump 30 always 0 0
 ucontrol boost 1 0 0 0 0
 jump 30 always 0 0
@@ -69,16 +69,16 @@ ucontrol approach vaultX vaultY vaultAppr 0 0
 ucontrol within vaultX vaultY defDist isNear 0
 jump 84 notEqual isNear 1
 ucontrol itemTake vault1 bombType unitCap 0 0
-uradar enemy any any distance 0 1 __fn1_enUnit
-jump 76 equal __fn1_enUnit null
+uradar enemy any any distance 0 1 __fn0_enUnit
+jump 76 equal __fn0_enUnit null
 ucontrol boost 0 0 0 0 0
-ucontrol targetp __fn1_enUnit 1 0 0 0
+ucontrol targetp __fn0_enUnit 1 0 0 0
 jump 30 always 0 0
-ulocate damaged core true @copper __fn1_outX __fn1_outY 0 0
-ucontrol within __fn1_outX __fn1_outY unitRange __fn1_isNear 0
-jump 82 notEqual __fn1_isNear 1
+ulocate damaged core true @copper __fn0_outX __fn0_outY 0 0
+ucontrol within __fn0_outX __fn0_outY unitRange __fn0_isNear 0
+jump 82 notEqual __fn0_isNear 1
 ucontrol boost 0 0 0 0 0
-ucontrol target __fn1_outX __fn1_outY 1 0 0
+ucontrol target __fn0_outX __fn0_outY 1 0 0
 jump 30 always 0 0
 ucontrol boost 1 0 0 0 0
 jump 30 always 0 0
@@ -96,16 +96,16 @@ sensor idleY vault1 @y
 ucontrol approach idleX idleY idleAppr 0 0
 ucontrol within idleX idleY defDist isNear 0
 jump 111 notEqual isNear 1
-uradar enemy any any distance 0 1 __fn1_enUnit
-jump 103 equal __fn1_enUnit null
+uradar enemy any any distance 0 1 __fn0_enUnit
+jump 103 equal __fn0_enUnit null
 ucontrol boost 0 0 0 0 0
-ucontrol targetp __fn1_enUnit 1 0 0 0
+ucontrol targetp __fn0_enUnit 1 0 0 0
 jump 30 always 0 0
-ulocate damaged core true @copper __fn1_outX __fn1_outY 0 0
-ucontrol within __fn1_outX __fn1_outY unitRange __fn1_isNear 0
-jump 109 notEqual __fn1_isNear 1
+ulocate damaged core true @copper __fn0_outX __fn0_outY 0 0
+ucontrol within __fn0_outX __fn0_outY unitRange __fn0_isNear 0
+jump 109 notEqual __fn0_isNear 1
 ucontrol boost 0 0 0 0 0
-ucontrol target __fn1_outX __fn1_outY 1 0 0
+ucontrol target __fn0_outX __fn0_outY 1 0 0
 jump 30 always 0 0
 ucontrol boost 1 0 0 0 0
 jump 30 always 0 0
@@ -127,8 +127,8 @@ ucontrol within turretX turretY enBuildDist isNear 0
 jump 136 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target turretX turretY 1 0 0
-sensor __fn0_isBoosted @unit @boosting
-jump 134 notEqual __fn0_isBoosted 1
+sensor __fn1_isBoosted @unit @boosting
+jump 134 notEqual __fn1_isBoosted 1
 ucontrol move turretX turretY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 30 always 0 0
@@ -139,8 +139,8 @@ ucontrol within coreX coreY enBuildDist isNear 0
 jump 148 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target coreX coreY 1 0 0
-sensor __fn0_isBoosted @unit @boosting
-jump 146 notEqual __fn0_isBoosted 1
+sensor __fn1_isBoosted @unit @boosting
+jump 146 notEqual __fn1_isBoosted 1
 ucontrol move coreX coreY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 30 always 0 0
@@ -152,8 +152,8 @@ ucontrol within genX genY enBuildDist isNear 0
 jump 161 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target genX genY 1 0 0
-sensor __fn0_isBoosted @unit @boosting
-jump 159 notEqual __fn0_isBoosted 1
+sensor __fn1_isBoosted @unit @boosting
+jump 159 notEqual __fn1_isBoosted 1
 ucontrol move genX genY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 30 always 0 0

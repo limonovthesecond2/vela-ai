@@ -10,10 +10,10 @@ param defDist = 20;    /// Defense range during repairs, bomb loading and idle
 
 do
     ubind(unit);
-    maxHp = @unit.maxHealth;
-    UNITRANGE = @unit.range;
-    unitCap = @unit.itemCapacity;
-    isDead = @unit.dead;
+    maxHp = @unit.@maxHealth;
+    UNITRANGE = @unit.@range;
+    unitCap = @unit.@itemCapacity;
+    isDead = @unit.@dead;
 loop while isDead == 1;    // Check if the unit is alive to make sure the variable values ​​are correct
 
 minRepHp = maxHp * 0.55;    /// Minimum health for repair
@@ -27,12 +27,12 @@ while true do
     ubind(unit);
 
     // Repair logic
-    unitFlag = @unit.flag;
+    unitFlag = @unit.@flag;
     if unitFlag == 0 then
-        hp = @unit.health;
+        hp = @unit.@health;
         if hp < maxRepHp then
-            repTurr = ulocate(building, repair, false, repX, repY);
-            repPower = repTurr.totalPower;
+            repTurr = ulocate(building, repair, false, out repX, out repY);
+            repPower = repTurr.@totalPower;
             if repPower > 0 then
                 isNear = within(repX, repY, defDist);
                 if isNear == 1 then
@@ -52,13 +52,13 @@ while true do
     end;
 
     // Bomb loading logic
-    items = @unit.totalItems;
+    items = @unit.@totalItems;
     if items < unitCap then
-        bombType = sorter1.config;
+        bombType = sorter1.@config;
         if bombType != null then
             if vault1 != null then
-                vaultX = vault1.x;
-                vaultY = vault1.y;
+                vaultX = vault1.@x;
+                vaultY = vault1.@y;
                 approach(vaultX, vaultY, vaultAppr);
                 isNear = within(vaultX, vaultY, defDist);
                 if isNear == 1 then
@@ -75,14 +75,14 @@ while true do
     flag(0);    // Reset flag
 
     // Idle logic
-    isEnabled = switch1.enabled;
+    isEnabled = switch1.@enabled;
     if isEnabled == 0 then
         if vault1 == null then    // If there is no vault, approach to this processor
-            idleX = @this.x;
-            idleY = @this.y;
+            idleX = @this.@x;
+            idleY = @this.@y;
         else
-            idleX = vault1.x;
-            idleY = vault1.y;
+            idleX = vault1.@x;
+            idleY = vault1.@y;
         end;
         approach(idleX, idleY, idleAppr);
         isNear = within(idleX, idleY, defDist);
@@ -97,17 +97,17 @@ while true do
     // Attack logic
     enUnit = uradar(enemy, any, any, maxHealth, 1);
     if enUnit != null then
-        enMaxHp = enUnit.maxHealth;
+        enMaxHp = enUnit.@maxHealth;
         if enMaxHp >= dangEnemy then
             boost(0);
             targetp(enUnit, 1);
-            enemyX = enUnit.x;
-            enemyY = enUnit.y;
+            enemyX = enUnit.@x;
+            enemyY = enUnit.@y;
             approach(enemyX, enemyY, enUnitAppr);
             continue;
         end;
     end;
-    ulocate(building, turret, true, turretX, turretY, enTurr);
+    ulocate(building, turret, true, out turretX, out turretY, out enTurr);
     if enTurr == 1 then
         isNear = within(turretX, turretY, enBuildDist);
         if isNear == 1 then
@@ -115,13 +115,13 @@ while true do
             continue;
         end;
     end;
-    ulocate(building, core, true, coreX, coreY);
+    ulocate(building, core, true, out coreX, out coreY);
     isNear = within(coreX, coreY, enBuildDist);
     if isNear == 1 then
         attackBuilding(coreX, coreY);
         continue;
     end;
-    ulocate(building, generator, true, genX, genY, enGener);
+    ulocate(building, generator, true, out genX, out genY, out enGener);
     if enGener == 1 then
         isNear = within(genX, genY, enBuildDist);
         if isNear == 1 then
@@ -131,17 +131,17 @@ while true do
     end;
 
     // Manual control logic
-    controlled = arc1.controlled;
+    controlled = arc1.@controlled;
     if controlled == 2 then
-        arcX = arc1.shootX;
-        arcY = arc1.shootY;
+        arcX = arc1.@shootX;
+        arcY = arc1.@shootY;
         isNear = within(arcX, arcY, arcDist);
         if isNear == 1 then
-            isShooting = arc1.shooting;
+            isShooting = arc1.@shooting;
             if isShooting == 1 then
                 boost(0);
                 target(arcX, arcY, 1);
-                isBoosted = @unit.boosting;
+                isBoosted = @unit.@boosting;
                 if isBoosted == 1 then
                     move(arcX, arcY);
                 else
@@ -161,13 +161,13 @@ while true do
 end;
 
 // Automatic defense against enemy units and repair of neighboring allied buildings
-def autoDef()
+void autoDef()
     enUnit = uradar(enemy, any, any, distance, 1);
     if enUnit != null then
         boost(0);
         targetp(enUnit, 1);
     else
-        ulocate(damaged, outX, outY);
+        ulocate(damaged, out outX, out outY);
         isNear = within(outX, outY, UNITRANGE);
         if isNear == 1 then
             boost(0);
@@ -179,10 +179,10 @@ def autoDef()
 end;
 
 // Attack the enemy building
-def attackBuilding(outX, outY)
+void attackBuilding(outX, outY)
     boost(0);
     target(outX, outY, 1);
-    isBoosted = @unit.boosting;
+    isBoosted = @unit.@boosting;
     if isBoosted == 1 then    // Kamikaze attack if can't land
         move(outX, outY);
         flag(1);

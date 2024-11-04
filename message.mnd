@@ -1,13 +1,13 @@
 #set target = ML7AS;    // Mindcode Logic version 7 (revision A) standard processors
 
-const date = "2024-11-01";    // Year-month-day
+const date = "2024-11-04";    // Year-month-day
 
-print("[pink]Vela Attack logIc[]\nUnits ");
-isEnabled = switch1.enabled;
+print("[pink]Vela Attack logIc[]\nUnits are ");
+isEnabled = switch1.@enabled;
 if isEnabled == 0 then
-    print("are [green]idle[]");
+    print("[green]idle[]");
 else
-    print("are [red]attacking[]");
+    print("[red]attacking[]");
 end;
 print($"\n\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 200 blocks with power > 0. You can control units via the [orange]arc turret[] and change the bomb type in the [orange]sorter[]\n\n  made by [orange]testt[] in ${date}\n\nSource code: [cyan]");
 print("github.com/limonovthesecond2/vela-ai");
@@ -15,15 +15,15 @@ printflush(message1);
 
 i = 0;
 do
-    controlled = arc1.controlled;
+    controlled = arc1.@controlled;
     if controlled == 2 then
         switch1.enabled = 1;
     end;
     block = getlink(i);
-    blockType = block.type;
+    blockType = block.@type;
     case blockType
         when @unloader, @item-source then
-            bombType = sorter1.config;
+            bombType = sorter1.@config;
             block.config = bombType;
     end;
     i += 1;
