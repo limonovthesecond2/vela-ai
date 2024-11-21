@@ -1,6 +1,6 @@
 #set target = ML7AS;    // Mindcode Logic version 7 (revision A) standard processors
 
-const date = "2024-11-05";    // Year-month-day
+const date = "2024-11-21";    // Year-month-day
 
 print("[pink]Vela Attack logIc[]\nUnits are ");
 isEnabled = switch1.@enabled;

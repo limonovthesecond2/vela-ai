@@ -6,6 +6,7 @@ param repAppr = 4;    /// Approach distance to repair turret
 param maxRepDist = 200;    /// Maximum distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault during bomb loading
 param idleAppr = 15;    /// Approach distance to vault when logic is idle
+param angleChange = 30;    /// Angle change in carousel logic
 param defDist = 20;    /// Defense range during repairs, bomb loading and idle
 
 do
@@ -21,7 +22,6 @@ maxRepHp = maxHp * 0.98;    /// Maximum health for repair
 dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
 enUnitAppr = UNITRANGE * 0.9;    /// Approach distance for attacking enemy units
 enBuildDist = UNITRANGE * 1.5;    /// Attack range to enemy buildings
-arcDist = UNITRANGE * 1.2;    /// Attack range in manual control mode
 
 while true do
     ubind(unit);
@@ -84,7 +84,22 @@ while true do
             idleX = vault1.@x;
             idleY = vault1.@y;
         end;
-        approach(idleX, idleY, idleAppr);
+
+        // Carousel logic
+        unitX = @unit.@x;
+        unitY = @unit.@y;
+        vectorX = unitX - idleX;
+        vectorY = unitY - idleY;
+        angle = angle(vectorX, vectorY);
+        angle += angleChange;
+        moveX = cos(angle);
+        moveY = sin(angle);
+        moveX *= idleAppr;
+        moveY *= idleAppr;
+        moveX += idleX;
+        moveY += idleY;
+        move(moveX, moveY);
+
         isNear = within(idleX, idleY, defDist);
         if isNear == 1 then
             autoDef();
@@ -135,7 +150,7 @@ while true do
     if controlled == 2 then
         arcX = arc1.@shootX;
         arcY = arc1.@shootY;
-        isNear = within(arcX, arcY, arcDist);
+        isNear = within(arcX, arcY, enBuildDist);
         if isNear == 1 then
             isShooting = arc1.@shooting;
             if isShooting == 1 then
@@ -150,8 +165,8 @@ while true do
                 continue;
             end;
         end;
-        boost(1);
         move(arcX, arcY);
+        boost(1);
         continue;
     end;
 
