@@ -84,26 +84,26 @@ while true do
             idleX = vault1.@x;
             idleY = vault1.@y;
         end;
-
-        // Carousel logic
-        unitX = @unit.@x;
-        unitY = @unit.@y;
-        vectorX = unitX - idleX;
-        vectorY = unitY - idleY;
-        angle = angle(vectorX, vectorY);
-        angle += angleChange;
-        moveX = cos(angle);
-        moveY = sin(angle);
-        moveX *= idleAppr;
-        moveY *= idleAppr;
-        moveX += idleX;
-        moveY += idleY;
-        move(moveX, moveY);
-
         isNear = within(idleX, idleY, defDist);
         if isNear == 1 then
             autoDef();
+
+            // Carousel logic
+            unitX = @unit.@x;
+            unitY = @unit.@y;
+            vectorX = unitX - idleX;
+            vectorY = unitY - idleY;
+            angle = angle(vectorX, vectorY);
+            angle += angleChange;
+            moveX = cos(angle);
+            moveY = sin(angle);
+            moveX *= idleAppr;
+            moveY *= idleAppr;
+            moveX += idleX;
+            moveY += idleY;
+            pathfind(moveX, moveY);
         else
+            approach(idleX, idleY, vaultAppr);
             boost(1);
         end;
         continue;
