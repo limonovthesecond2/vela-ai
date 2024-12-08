@@ -3,15 +3,16 @@
 
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
-param maxRepDist = 200;    /// Maximum distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault during bomb loading
-param idleAppr = 15;    /// Approach distance to vault when logic is idle
+param idleAppr = 30;    /// Approach distance to vault when logic is idle
 param angleChange = 30;    /// Angle change in carousel logic
-param defDist = 20;    /// Defense range during repairs, bomb loading and idle
+param defDist = 15;    /// Defense range during repairs and bomb loading
+param defDistIdle = 35;    /// Defense range during idle
 
 do
     ubind(unit);
     maxHp = @unit.@maxHealth;
+    maxSpeed = @unit.@speed;
     UNITRANGE = @unit.@range;
     unitCap = @unit.@itemCapacity;
     isDead = @unit.@dead;
@@ -20,6 +21,7 @@ loop while isDead == 1;    // Check if the unit is alive to make sure the variab
 minRepHp = maxHp * 0.55;    /// Minimum health for repair
 maxRepHp = maxHp * 0.98;    /// Maximum health for repair
 dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
+maxRepDist = maxSpeed * 60;    /// Maximum distance to repair turret
 enUnitAppr = UNITRANGE * 0.9;    /// Approach distance for attacking enemy units
 enBuildDist = UNITRANGE * 1.5;    /// Attack range to enemy buildings
 
@@ -84,7 +86,7 @@ while true do
             idleX = vault1.@x;
             idleY = vault1.@y;
         end;
-        isNear = within(idleX, idleY, defDist);
+        isNear = within(idleX, idleY, defDistIdle);
         if isNear == 1 then
             autoDef();
 

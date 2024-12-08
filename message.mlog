@@ -4,8 +4,8 @@ jump 5 notEqual isEnabled 0
 print "[green]idle[]"
 jump 6 always 0 0
 print "[red]attacking[]"
-print "\n\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 200 blocks with power > 0. You can control units via the [orange]arc turret[] and change the bomb type in the [orange]sorter[]\n\n  made by [orange]testt[] in "
-print "2024-11-23\n\nSource code: [cyan]"
+print "\n\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units are repaired at repair turrets within 1 minute with power > 0. You can control units via the [orange]arc turret[] and change the bomb type in the [orange]sorter[]\n\n  made by [orange]testt[] in "
+print "2024-12-08\n\nSource code: [cyan]"
 print "github.com/limonovthesecond2/vela-ai"
 printflush message1
 set i 0
