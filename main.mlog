@@ -14,8 +14,8 @@ sensor maxSpeed @unit @speed
 sensor unitRange @unit @range
 sensor unitCap @unit @itemCapacity
 sensor isDead @unit @dead
-print "Check if the unit is alive to make sure the variable values ​​are correct"
 jump 10 equal isDead 1
+print "Check if the unit is alive to make sure the variable values ​​are correct"
 op mul minRepHp maxHp 0.55
 print "Minimum health for repair"
 op mul maxRepHp maxHp 0.98
@@ -138,8 +138,8 @@ sensor isShooting arc1 @shooting
 jump 147 notEqual isShooting 1
 ucontrol boost 0 0 0 0 0
 ucontrol target arcX arcY 1 0 0
-sensor isBoosted @unit @boosting
-jump 145 notEqual isBoosted 1
+sensor __fn1_isBoosted @unit @boosting
+jump 145 notEqual __fn1_isBoosted 1
 ucontrol move arcX arcY 0 0 0
 ucontrol flag 1 0 0 0 0
 jump 34 always 0 0

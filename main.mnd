@@ -13,8 +13,8 @@ do
     maxSpeed = @unit.@speed;
     UNITRANGE = @unit.@range;
     unitCap = @unit.@itemCapacity;
-    isDead = @unit.@dead;    /// Check if the unit is alive to make sure the variable values ​​are correct
-loop while isDead == 1;
+    isDead = @unit.@dead;
+loop while isDead == 1;    /// Check if the unit is alive to make sure the variable values ​​are correct
 
 minRepHp = maxHp * 0.55;    /// Minimum health for repair
 maxRepHp = maxHp * 0.98;    /// Maximum health for repair
@@ -120,15 +120,7 @@ while true do
         if isNear == 1 then
             isShooting = arc1.@shooting;
             if isShooting == 1 then
-                boost(0);
-                target(arcX, arcY, 1);
-                isBoosted = @unit.@boosting;
-                if isBoosted == 1 then
-                    move(arcX, arcY);
-                    flag(1);
-                else
-                    approach(arcX, arcY, UNITRANGE);
-                end;
+                attackBuilding(arcX, arcY);
                 continue;
             end;
         end;
