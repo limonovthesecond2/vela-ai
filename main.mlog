@@ -7,108 +7,109 @@ print "Approach distance to vault during bomb loading"
 set idleAppr 30
 print "Approach distance to vault when logic is idle"
 set angleChange 30
-print "Angle change in carousel logic"
-set defDist 15
-print "Defense range during repairs and bomb loading"
-set defDistIdle 35
-print "Defense range during idle"
+print "Angle change in carousel logic (more is faster)"
 ubind unit
 sensor maxHp @unit @maxHealth
 sensor maxSpeed @unit @speed
-sensor UNITRANGE @unit @range
+sensor unitRange @unit @range
 sensor unitCap @unit @itemCapacity
 sensor isDead @unit @dead
-jump 14 equal isDead 1
+print "Check if the unit is alive to make sure the variable values ​​are correct"
+jump 10 equal isDead 1
 op mul minRepHp maxHp 0.55
 print "Minimum health for repair"
 op mul maxRepHp maxHp 0.98
 print "Maximum health for repair"
-op mul dangEnemy maxHp 0.068
-print "Minimum health of a dangerous enemy"
 op mul maxRepDist maxSpeed 60
 print "Maximum distance to repair turret"
-op mul enUnitAppr UNITRANGE 0.9
+op mul dangEnemy maxHp 0.068
+print "Minimum health of a dangerous enemy"
+op add defDist vaultAppr 10
+print "Defense range during repairs and bomb loading"
+op add defDistIdle idleAppr 5
+print "Defense range during idle"
+op mul enUnitAppr unitRange 0.9
 print "Approach distance for attacking enemy units"
-op mul enBuildDist UNITRANGE 1.5
+op mul enBuildDist unitRange 1.5
 print "Attack range to enemy buildings"
 ubind unit
 sensor unitFlag @unit @flag
-jump 63 notEqual unitFlag 0
+jump 64 notEqual unitFlag 0
 sensor hp @unit @health
-jump 63 greaterThanEq hp maxRepHp
+jump 64 greaterThanEq hp maxRepHp
 ulocate building repair false @copper repX repY 0 repTurr
 sensor repPower repTurr @totalPower
-jump 63 lessThanEq repPower 0
+jump 64 lessThanEq repPower 0
 ucontrol within repX repY defDist isNear 0
-jump 57 notEqual isNear 1
+jump 58 notEqual isNear 1
 ucontrol approach repX repY repAppr 0 0
 uradar enemy any any distance 0 1 __fn0_enUnit
-jump 49 equal __fn0_enUnit null
+jump 50 equal __fn0_enUnit null
 ucontrol boost 0 0 0 0 0
 ucontrol targetp __fn0_enUnit 1 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ulocate damaged core true @copper __fn0_outX __fn0_outY 0 0
-ucontrol within __fn0_outX __fn0_outY UNITRANGE __fn0_isNear 0
-jump 55 notEqual __fn0_isNear 1
+ucontrol within __fn0_outX __fn0_outY unitRange __fn0_isNear 0
+jump 56 notEqual __fn0_isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target __fn0_outX __fn0_outY 1 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
-jump 63 greaterThan hp minRepHp
+jump 34 always 0 0
+jump 64 greaterThan hp minRepHp
 ucontrol within repX repY maxRepDist isRepNear 0
-jump 63 notEqual isRepNear 1
+jump 64 notEqual isRepNear 1
 ucontrol approach repX repY repAppr 0 0
 ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 sensor items @unit @totalItems
-jump 89 greaterThanEq items unitCap
+jump 90 greaterThanEq items unitCap
 sensor bombType sorter1 @config
-jump 89 equal bombType null
-jump 89 equal vault1 null
+jump 90 equal bombType null
+jump 90 equal vault1 null
 sensor vaultX vault1 @x
 sensor vaultY vault1 @y
 ucontrol approach vaultX vaultY vaultAppr 0 0
 ucontrol within vaultX vaultY defDist isNear 0
-jump 87 notEqual isNear 1
+jump 88 notEqual isNear 1
 ucontrol itemTake vault1 bombType unitCap 0 0
 uradar enemy any any distance 0 1 __fn0_enUnit
-jump 79 equal __fn0_enUnit null
+jump 80 equal __fn0_enUnit null
 ucontrol boost 0 0 0 0 0
 ucontrol targetp __fn0_enUnit 1 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ulocate damaged core true @copper __fn0_outX __fn0_outY 0 0
-ucontrol within __fn0_outX __fn0_outY UNITRANGE __fn0_isNear 0
-jump 85 notEqual __fn0_isNear 1
+ucontrol within __fn0_outX __fn0_outY unitRange __fn0_isNear 0
+jump 86 notEqual __fn0_isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target __fn0_outX __fn0_outY 1 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ucontrol flag 0 0 0 0 0
 sensor isEnabled switch1 @enabled
-jump 129 notEqual isEnabled 0
-jump 96 notEqual vault1 null
+jump 130 notEqual isEnabled 0
+jump 97 notEqual vault1 null
 set idleX @thisx
 set idleY @thisy
-jump 98 always 0 0
+jump 99 always 0 0
 sensor idleX vault1 @x
 sensor idleY vault1 @y
 ucontrol within idleX idleY defDistIdle isNear 0
-jump 126 notEqual isNear 1
+jump 127 notEqual isNear 1
 uradar enemy any any distance 0 1 __fn0_enUnit
-jump 105 equal __fn0_enUnit null
+jump 106 equal __fn0_enUnit null
 ucontrol boost 0 0 0 0 0
 ucontrol targetp __fn0_enUnit 1 0 0 0
-jump 112 always 0 0
+jump 113 always 0 0
 ulocate damaged core true @copper __fn0_outX __fn0_outY 0 0
-ucontrol within __fn0_outX __fn0_outY UNITRANGE __fn0_isNear 0
-jump 111 notEqual __fn0_isNear 1
+ucontrol within __fn0_outX __fn0_outY unitRange __fn0_isNear 0
+jump 112 notEqual __fn0_isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target __fn0_outX __fn0_outY 1 0 0
-jump 112 always 0 0
+jump 113 always 0 0
 ucontrol boost 1 0 0 0 0
 sensor unitX @unit @x
 sensor unitY @unit @y
@@ -123,79 +124,80 @@ op mul moveY moveY idleAppr
 op add moveX moveX idleX
 op add moveY moveY idleY
 ucontrol pathfind moveX moveY 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ucontrol approach idleX idleY vaultAppr 0 0
 ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
+sensor controlled arc1 @controlled
+jump 150 notEqual controlled 2
+sensor arcX arc1 @shootX
+sensor arcY arc1 @shootY
+ucontrol within arcX arcY enBuildDist isNear 0
+jump 147 notEqual isNear 1
+sensor isShooting arc1 @shooting
+jump 147 notEqual isShooting 1
+ucontrol boost 0 0 0 0 0
+ucontrol target arcX arcY 1 0 0
+sensor isBoosted @unit @boosting
+jump 145 notEqual isBoosted 1
+ucontrol move arcX arcY 0 0 0
+ucontrol flag 1 0 0 0 0
+jump 34 always 0 0
+ucontrol approach arcX arcY unitRange 0 0
+jump 34 always 0 0
+ucontrol move arcX arcY 0 0 0
+ucontrol boost 1 0 0 0 0
+jump 34 always 0 0
 uradar enemy any any maxHealth 0 1 enUnit
-jump 139 equal enUnit null
+jump 160 equal enUnit null
 sensor enMaxHp enUnit @maxHealth
-jump 139 lessThan enMaxHp dangEnemy
+jump 160 lessThan enMaxHp dangEnemy
 ucontrol boost 0 0 0 0 0
 ucontrol targetp enUnit 1 0 0 0
 sensor enemyX enUnit @x
 sensor enemyY enUnit @y
 ucontrol approach enemyX enemyY enUnitAppr 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 ulocate building turret true @copper turretX turretY enTurr 0
-jump 152 notEqual enTurr 1
+jump 173 notEqual enTurr 1
 ucontrol within turretX turretY enBuildDist isNear 0
-jump 152 notEqual isNear 1
+jump 173 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target turretX turretY 1 0 0
 sensor __fn1_isBoosted @unit @boosting
-jump 150 notEqual __fn1_isBoosted 1
+jump 171 notEqual __fn1_isBoosted 1
 ucontrol move turretX turretY 0 0 0
 ucontrol flag 1 0 0 0 0
-jump 33 always 0 0
-ucontrol approach turretX turretY UNITRANGE 0 0
-jump 33 always 0 0
+jump 34 always 0 0
+ucontrol approach turretX turretY unitRange 0 0
+jump 34 always 0 0
 ulocate building core true @copper coreX coreY 0 0
 ucontrol within coreX coreY enBuildDist isNear 0
-jump 164 notEqual isNear 1
+jump 185 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target coreX coreY 1 0 0
 sensor __fn1_isBoosted @unit @boosting
-jump 162 notEqual __fn1_isBoosted 1
+jump 183 notEqual __fn1_isBoosted 1
 ucontrol move coreX coreY 0 0 0
 ucontrol flag 1 0 0 0 0
-jump 33 always 0 0
-ucontrol approach coreX coreY UNITRANGE 0 0
-jump 33 always 0 0
+jump 34 always 0 0
+ucontrol approach coreX coreY unitRange 0 0
+jump 34 always 0 0
 ulocate building generator true @copper genX genY enGener 0
-jump 177 notEqual enGener 1
+jump 198 notEqual enGener 1
 ucontrol within genX genY enBuildDist isNear 0
-jump 177 notEqual isNear 1
+jump 198 notEqual isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target genX genY 1 0 0
 sensor __fn1_isBoosted @unit @boosting
-jump 175 notEqual __fn1_isBoosted 1
+jump 196 notEqual __fn1_isBoosted 1
 ucontrol move genX genY 0 0 0
 ucontrol flag 1 0 0 0 0
-jump 33 always 0 0
-ucontrol approach genX genY UNITRANGE 0 0
-jump 33 always 0 0
-sensor controlled arc1 @controlled
-jump 196 notEqual controlled 2
-sensor arcX arc1 @shootX
-sensor arcY arc1 @shootY
-ucontrol within arcX arcY enBuildDist isNear 0
-jump 193 notEqual isNear 1
-sensor isShooting arc1 @shooting
-jump 193 notEqual isShooting 1
-ucontrol boost 0 0 0 0 0
-ucontrol target arcX arcY 1 0 0
-sensor isBoosted @unit @boosting
-jump 191 notEqual isBoosted 1
-ucontrol move arcX arcY 0 0 0
-jump 33 always 0 0
-ucontrol approach arcX arcY enUnitAppr 0 0
-jump 33 always 0 0
-ucontrol move arcX arcY 0 0 0
-ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
+ucontrol approach genX genY unitRange 0 0
+jump 34 always 0 0
 ucontrol autoPathfind 0 0 0 0 0
 ucontrol boost 1 0 0 0 0
-jump 33 always 0 0
+jump 34 always 0 0
 end
 print "Compiled by Mindcode - github.com/cardillan/mindcode"

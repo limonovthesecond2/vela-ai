@@ -5,9 +5,7 @@ param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault during bomb loading
 param idleAppr = 30;    /// Approach distance to vault when logic is idle
-param angleChange = 30;    /// Angle change in carousel logic
-param defDist = 15;    /// Defense range during repairs and bomb loading
-param defDistIdle = 35;    /// Defense range during idle
+param angleChange = 30;    /// Angle change in carousel logic (more is faster)
 
 do
     ubind(unit);
@@ -15,13 +13,15 @@ do
     maxSpeed = @unit.@speed;
     UNITRANGE = @unit.@range;
     unitCap = @unit.@itemCapacity;
-    isDead = @unit.@dead;
-loop while isDead == 1;    // Check if the unit is alive to make sure the variable values ​​are correct
+    isDead = @unit.@dead;    /// Check if the unit is alive to make sure the variable values ​​are correct
+loop while isDead == 1;
 
 minRepHp = maxHp * 0.55;    /// Minimum health for repair
 maxRepHp = maxHp * 0.98;    /// Maximum health for repair
-dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
 maxRepDist = maxSpeed * 60;    /// Maximum distance to repair turret
+dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
+defDist = vaultAppr + 10;    /// Defense range during repairs and bomb loading
+defDistIdle = idleAppr + 5;    /// Defense range during idle
 enUnitAppr = UNITRANGE * 0.9;    /// Approach distance for attacking enemy units
 enBuildDist = UNITRANGE * 1.5;    /// Attack range to enemy buildings
 
@@ -111,6 +111,32 @@ while true do
         continue;
     end;
 
+    // Manual control logic
+    controlled = arc1.@controlled;
+    if controlled == 2 then
+        arcX = arc1.@shootX;
+        arcY = arc1.@shootY;
+        isNear = within(arcX, arcY, enBuildDist);
+        if isNear == 1 then
+            isShooting = arc1.@shooting;
+            if isShooting == 1 then
+                boost(0);
+                target(arcX, arcY, 1);
+                isBoosted = @unit.@boosting;
+                if isBoosted == 1 then
+                    move(arcX, arcY);
+                    flag(1);
+                else
+                    approach(arcX, arcY, UNITRANGE);
+                end;
+                continue;
+            end;
+        end;
+        move(arcX, arcY);
+        boost(1);
+        continue;
+    end;
+
     // Attack logic
     enUnit = uradar(enemy, any, any, maxHealth, 1);
     if enUnit != null then
@@ -145,31 +171,6 @@ while true do
             attackBuilding(genX, genY);
             continue;
         end;
-    end;
-
-    // Manual control logic
-    controlled = arc1.@controlled;
-    if controlled == 2 then
-        arcX = arc1.@shootX;
-        arcY = arc1.@shootY;
-        isNear = within(arcX, arcY, enBuildDist);
-        if isNear == 1 then
-            isShooting = arc1.@shooting;
-            if isShooting == 1 then
-                boost(0);
-                target(arcX, arcY, 1);
-                isBoosted = @unit.@boosting;
-                if isBoosted == 1 then
-                    move(arcX, arcY);
-                else
-                    approach(arcX, arcY, enUnitAppr);
-                end;
-                continue;
-            end;
-        end;
-        move(arcX, arcY);
-        boost(1);
-        continue;
     end;
 
     // Fly to the nearest enemy base
