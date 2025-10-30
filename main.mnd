@@ -1,184 +1,217 @@
-#set target = ML7AS;    // Mindcode Logic version 7 (revision A) standard processors
-#set remarks = active;    // Remarks (///) are included in the compiled code and are executed
+#set target = 8;    // Mindustry Logic for the latest release of Mindustry 8
+#set remarks = active;    // Remarks are included in the compiled code and are executed
+#set syntax = strict;    // Enable strict syntax checking
 
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault during bomb loading
 param idleAppr = 30;    /// Approach distance to vault when logic is idle
 param angleChange = 30;    /// Angle change in carousel logic (more is faster)
+param defaultFlag = 1000;    /// Default unit flag value
+param kamikazeFlag = 1001;    /// Kamikaze attack flag value (should be different from defaultFlag)
 
-do
-    ubind(unit);
-    maxHp = @unit.@maxHealth;
-    maxSpeed = @unit.@speed;
-    UNITRANGE = @unit.@range;
-    unitCap = @unit.@itemCapacity;
-    isDead = @unit.@dead;
-loop while isDead == 1;    /// Check if the unit is alive to make sure the variable values ​​are correct
+linked switch1;    // Switch to toggle idle/attack mode
+linked sorter1;    // Sorter to select bomb type
+linked vault1;    // Vault for bomb loading
+linked arc1;    // Arc turret for manual control
 
-minRepHp = maxHp * 0.55;    /// Minimum health for repair
-maxRepHp = maxHp * 0.98;    /// Maximum health for repair
-maxRepDist = maxSpeed * 60;    /// Maximum distance to repair turret
-dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
-defDist = vaultAppr + 10;    /// Defense range during repairs and bomb loading
-defDistIdle = idleAppr + 5;    /// Defense range during idle
-enUnitAppr = UNITRANGE * 0.9;    /// Approach distance for attacking enemy units
-enBuildDist = UNITRANGE * 1.5;    /// Attack range to enemy buildings
+begin
+    var isDead;
+    var maxHp;
+    var maxSpeed;
+    var unitRange;
+    var unitCap;
 
-while true do
-    ubind(unit);
+    /// Check if the unit is alive to make sure the variable values ​​are correct
+    do
+        ubind(unit);
+        maxHp = @unit.@maxHealth;
+        maxSpeed = @unit.@speed;
+        unitRange = @unit.@range;
+        unitCap = @unit.@itemCapacity;
+        isDead = @unit.@dead;
+    while isDead == 1;
 
-    // Repair logic
-    unitFlag = @unit.@flag;
-    if unitFlag == 0 then
-        hp = @unit.@health;
-        if hp < maxRepHp then
-            repTurr = ulocate(building, repair, false, out repX, out repY);
-            repPower = repTurr.@totalPower;
-            if repPower > 0 then
-                isNear = within(repX, repY, defDist);
-                if isNear == 1 then
-                    approach(repX, repY, repAppr);
-                    autoDef();
-                    continue;
-                elsif hp <= minRepHp then
-                    isRepNear = within(repX, repY, maxRepDist);
-                    if isRepNear == 1 then
+    var minRepHp = maxHp * 0.55;    /// Minimum health for repair
+    var maxRepHp = maxHp * 0.98;    /// Maximum health for repair
+    var maxRepDist = maxSpeed * 60;    /// Maximum distance to repair turret
+    var dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
+    var defDist = repAppr + 10;    /// Defense range during repair and bomb loading
+    var defDistIdle = idleAppr + 5;    /// Defense range during idle
+    var enUnitAppr = unitRange * 0.9;    /// Approach distance to enemy units
+    var enBuildDist = unitRange * 1.5;    /// Attack range to enemy buildings
+
+    while true do
+        ubind(unit);
+
+        var isNear;
+
+        // Repair logic
+        var unitFlag = @unit.@flag;
+        if unitFlag == defaultFlag then
+            var hp = @unit.@health;
+            if hp < maxRepHp then
+                var repX;
+                var repY;
+                var repTurr = ulocate(:building, :repair, false, out repX, out repY);
+                var repPower = repTurr.@totalPower;
+                if repPower > 0 then
+                    isNear = within(repX, repY, defDist);
+                    if isNear == 1 then
                         approach(repX, repY, repAppr);
-                        boost(1);
+                        autoDef(unitRange);
                         continue;
+                    elsif hp <= minRepHp then
+                        var isRepNear = within(repX, repY, maxRepDist);
+                        if isRepNear == 1 then
+                            approach(repX, repY, repAppr);
+                            boost(1);
+                            continue;
+                        end;
                     end;
                 end;
             end;
         end;
-    end;
 
-    // Bomb loading logic
-    items = @unit.@totalItems;
-    if items < unitCap then
-        bombType = sorter1.@config;
-        if bombType != null then
-            if vault1 != null then
-                vaultX = vault1.@x;
-                vaultY = vault1.@y;
-                approach(vaultX, vaultY, vaultAppr);
-                isNear = within(vaultX, vaultY, defDist);
-                if isNear == 1 then
-                    itemTake(vault1, bombType, unitCap);
-                    autoDef();
-                else
-                    boost(1);
+        // Bomb loading logic
+        var items = @unit.@totalItems;
+        if items < unitCap then
+            var bombType = sorter1.@config;
+            if bombType != null then
+                if vault1 != null then
+                    var vaultX = vault1.@x;
+                    var vaultY = vault1.@y;
+                    approach(vaultX, vaultY, vaultAppr);
+                    isNear = within(vaultX, vaultY, defDist);
+                    if isNear == 1 then
+                        itemTake(vault1, bombType, unitCap);
+                        autoDef(unitRange);
+                    else
+                        boost(1);
+                    end;
+                    continue;
                 end;
-                continue;
             end;
         end;
-    end;
 
-    flag(0);    // Reset flag
+        flag(defaultFlag);    // Reset unit flag to enable repair logic
 
-    // Idle logic
-    isEnabled = switch1.@enabled;
-    if isEnabled == 0 then
-        if vault1 == null then    // If there is no vault, approach to this processor
-            idleX = @this.@x;
-            idleY = @this.@y;
-        else
-            idleX = vault1.@x;
-            idleY = vault1.@y;
+        // Idle logic
+        var isEnabled = switch1.@enabled;
+        if isEnabled == 0 then
+            var idleX;
+            var idleY;
+            if vault1 == null then    // If there is no vault, approach to this processor
+                idleX = @this.@x;
+                idleY = @this.@y;
+            else
+                idleX = vault1.@x;
+                idleY = vault1.@y;
+            end;
+            isNear = within(idleX, idleY, defDistIdle);
+            if isNear == 1 then
+                autoDef(unitRange);
+
+                // Carousel movement around the vault
+                var unitX = @unit.@x;
+                var unitY = @unit.@y;
+                var vectorX = unitX - idleX;
+                var vectorY = unitY - idleY;
+                var angle = angle(vectorX, vectorY);
+                angle += angleChange;
+                var moveX = cos(angle);
+                var moveY = sin(angle);
+                moveX *= idleAppr;
+                moveY *= idleAppr;
+                moveX += idleX;
+                moveY += idleY;
+                pathfind(moveX, moveY);
+            else
+                approach(idleX, idleY, vaultAppr);
+                boost(1);
+            end;
+            continue;
         end;
-        isNear = within(idleX, idleY, defDistIdle);
-        if isNear == 1 then
-            autoDef();
 
-            // Carousel logic
-            unitX = @unit.@x;
-            unitY = @unit.@y;
-            vectorX = unitX - idleX;
-            vectorY = unitY - idleY;
-            angle = angle(vectorX, vectorY);
-            angle += angleChange;
-            moveX = cos(angle);
-            moveY = sin(angle);
-            moveX *= idleAppr;
-            moveY *= idleAppr;
-            moveX += idleX;
-            moveY += idleY;
-            pathfind(moveX, moveY);
-        else
-            approach(idleX, idleY, vaultAppr);
+        // Manual control via arc turret
+        var controlled = arc1.@controlled;
+        if controlled == 2 then
+            var arcX = arc1.@shootX;
+            var arcY = arc1.@shootY;
+            isNear = within(arcX, arcY, enBuildDist);
+            if isNear == 1 then
+                var isShooting = arc1.@shooting;
+                if isShooting == 1 then
+                    attackBuilding(arcX, arcY, unitRange);
+                    continue;
+                end;
+            end;
+            move(arcX, arcY);
             boost(1);
+            continue;
         end;
-        continue;
-    end;
 
-    // Manual control logic
-    controlled = arc1.@controlled;
-    if controlled == 2 then
-        arcX = arc1.@shootX;
-        arcY = arc1.@shootY;
-        isNear = within(arcX, arcY, enBuildDist);
-        if isNear == 1 then
-            isShooting = arc1.@shooting;
-            if isShooting == 1 then
-                attackBuilding(arcX, arcY);
+        // Attack logic
+        var enUnit = uradar(:enemy, :any, :any, :maxHealth, 1);
+        if enUnit != null then
+            var enMaxHp = enUnit.@maxHealth;
+            if enMaxHp >= dangEnemy then
+                boost(0);
+                targetp(enUnit, 1);
+                var enemyX = enUnit.@x;
+                var enemyY = enUnit.@y;
+                approach(enemyX, enemyY, enUnitAppr);
                 continue;
             end;
         end;
-        move(arcX, arcY);
+        var turretX;
+        var turretY;
+        var enTurr;
+        ulocate(:building, :turret, true, out turretX, out turretY, out enTurr);
+        if enTurr == 1 then
+            isNear = within(turretX, turretY, enBuildDist);
+            if isNear == 1 then
+                attackBuilding(turretX, turretY, unitRange);
+                continue;
+            end;
+        end;
+        var coreX;
+        var coreY;
+        ulocate(:building, :core, true, out coreX, out coreY);
+        isNear = within(coreX, coreY, enBuildDist);
+        if isNear == 1 then
+            attackBuilding(coreX, coreY, unitRange);
+            continue;
+        end;
+        var genX;
+        var genY;
+        var enGener;
+        ulocate(:building, :generator, true, out genX, out genY, out enGener);
+        if enGener == 1 then
+            isNear = within(genX, genY, enBuildDist);
+            if isNear == 1 then
+                attackBuilding(genX, genY, unitRange);
+                continue;
+            end;
+        end;
+
+        // Fly to the nearest enemy base
+        autoPathfind();
         boost(1);
-        continue;
     end;
-
-    // Attack logic
-    enUnit = uradar(enemy, any, any, maxHealth, 1);
-    if enUnit != null then
-        enMaxHp = enUnit.@maxHealth;
-        if enMaxHp >= dangEnemy then
-            boost(0);
-            targetp(enUnit, 1);
-            enemyX = enUnit.@x;
-            enemyY = enUnit.@y;
-            approach(enemyX, enemyY, enUnitAppr);
-            continue;
-        end;
-    end;
-    ulocate(building, turret, true, out turretX, out turretY, out enTurr);
-    if enTurr == 1 then
-        isNear = within(turretX, turretY, enBuildDist);
-        if isNear == 1 then
-            attackBuilding(turretX, turretY);
-            continue;
-        end;
-    end;
-    ulocate(building, core, true, out coreX, out coreY);
-    isNear = within(coreX, coreY, enBuildDist);
-    if isNear == 1 then
-        attackBuilding(coreX, coreY);
-        continue;
-    end;
-    ulocate(building, generator, true, out genX, out genY, out enGener);
-    if enGener == 1 then
-        isNear = within(genX, genY, enBuildDist);
-        if isNear == 1 then
-            attackBuilding(genX, genY);
-            continue;
-        end;
-    end;
-
-    // Fly to the nearest enemy base
-    autoPathfind();
-    boost(1);
 end;
 
 // Automatic defense against enemy units and repair of neighboring allied buildings
-void autoDef()
-    enUnit = uradar(enemy, any, any, distance, 1);
+void autoDef(unitRange)
+    var enUnit = uradar(:enemy, :any, :any, :distance, 1);
     if enUnit != null then
         boost(0);
         targetp(enUnit, 1);
     else
-        ulocate(damaged, out outX, out outY);
-        isNear = within(outX, outY, UNITRANGE);
+        var outX;
+        var outY;
+        ulocate(:damaged, out outX, out outY);
+        var isNear = within(outX, outY, unitRange);
         if isNear == 1 then
             boost(0);
             target(outX, outY, 1);
@@ -188,15 +221,15 @@ void autoDef()
     end;
 end;
 
-// Attack the enemy building
-void attackBuilding(outX, outY)
+// Attack enemy building at specified coordinates
+void attackBuilding(outX, outY, unitRange)
     boost(0);
     target(outX, outY, 1);
-    isBoosted = @unit.@boosting;
+    var isBoosted = @unit.@boosting;
     if isBoosted == 1 then    // Kamikaze attack if can't land
-        move(outX, outY);
-        flag(1);
+        pathfind(outX, outY);
+        flag(kamikazeFlag);
     else
-        approach(outX, outY, UNITRANGE);
+        approach(outX, outY, unitRange);
     end;
 end;
