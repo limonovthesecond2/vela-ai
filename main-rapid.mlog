@@ -9,9 +9,9 @@ set idleAppr 30
 print "Angle change in carousel logic (more is faster)"
 set angleChange 30
 print "Default unit flag value"
-set defaultFlag 1000
+set defaultFlag 100
 print "Kamikaze attack flag value (should be different from defaultFlag)"
-set kamikazeFlag 1001
+set kamikazeFlag 111
 print "Check if the unit is alive to make sure the variable values ​​are correct"
 ubind unit
 sensor :maxHp @unit @maxHealth

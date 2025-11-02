@@ -7,8 +7,8 @@ param repAppr = 4;    /// Approach distance to repair turret
 param vaultAppr = 6;    /// Approach distance to vault during bomb loading
 param idleAppr = 30;    /// Approach distance to vault when logic is idle
 param angleChange = 30;    /// Angle change in carousel logic (more is faster)
-param defaultFlag = 1000;    /// Default unit flag value
-param kamikazeFlag = 1001;    /// Kamikaze attack flag value (should be different from defaultFlag)
+param defaultFlag = 100;    /// Default unit flag value
+param kamikazeFlag = 111;    /// Kamikaze attack flag value (should be different from defaultFlag)
 
 linked switch1;    // Switch to toggle idle/attack mode
 linked sorter1;    // Sorter to select bomb type

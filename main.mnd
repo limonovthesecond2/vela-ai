@@ -5,14 +5,13 @@
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
 param coreAppr = 6;    /// Approach distance to core during bomb loading
-param idleAppr = 30;    /// Approach distance to vault when logic is idle
+param idleAppr = 30;    /// Approach distance to core when logic is idle
 param angleChange = 30;    /// Angle change in carousel logic (more is faster)
-param defaultFlag = 1000;    /// Default unit flag value
-param kamikazeFlag = 1001;    /// Kamikaze attack flag value (should be different from defaultFlag)
+param defaultFlag = 100;    /// Default unit flag value
+param kamikazeFlag = 111;    /// Kamikaze attack flag value (should be different from defaultFlag)
 
 linked switch1;    // Switch to toggle idle/attack mode
 linked sorter1;    // Sorter to select bomb type
-linked vault1;    // Vault for bomb loading
 linked arc1;    // Arc turret for manual control
 
 begin
@@ -100,18 +99,18 @@ begin
         if isEnabled == 0 then
             var idleX;
             var idleY;
-            if vault1 == null then    // If there is no vault, approach to this processor
+            if switch1 == null then    // If there is no switch, approach to this processor
                 idleX = @this.@x;
                 idleY = @this.@y;
             else
-                idleX = vault1.@x;
-                idleY = vault1.@y;
+                idleX = switch1.@x;
+                idleY = switch1.@y;
             end;
             isNear = within(idleX, idleY, defDistIdle);
             if isNear == 1 then
                 autoDef(unitRange);
 
-                // Carousel movement around the vault
+                // Carousel movement
                 var unitX = @unit.@x;
                 var unitY = @unit.@y;
                 var vectorX = unitX - idleX;

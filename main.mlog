@@ -4,14 +4,14 @@ print "Approach distance to repair turret"
 set repAppr 4
 print "Approach distance to core during bomb loading"
 set coreAppr 6
-print "Approach distance to vault when logic is idle"
+print "Approach distance to core when logic is idle"
 set idleAppr 30
 print "Angle change in carousel logic (more is faster)"
 set angleChange 30
 print "Default unit flag value"
-set defaultFlag 1000
+set defaultFlag 100
 print "Kamikaze attack flag value (should be different from defaultFlag)"
-set kamikazeFlag 1001
+set kamikazeFlag 111
 print "Check if the unit is alive to make sure the variable values ​​are correct"
 ubind unit
 sensor :maxHp @unit @maxHealth
@@ -93,12 +93,12 @@ jump 38 always 0 0
 ucontrol flag defaultFlag 0 0 0 0
 sensor :isEnabled switch1 @enabled
 jump 132 notEqual :isEnabled 0
-jump 99 notEqual vault1 null
+jump 99 notEqual switch1 null
 set :idleX @thisx
 set :idleY @thisy
 jump 101 always 0 0
-sensor :idleX vault1 @x
-sensor :idleY vault1 @y
+sensor :idleX switch1 @x
+sensor :idleY switch1 @y
 ucontrol within :idleX :idleY :defDistIdle :isNear 0
 jump 129 notEqual :isNear 1
 uradar enemy any any distance 0 1 :autoDef:enUnit
