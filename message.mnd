@@ -1,6 +1,6 @@
 #set target = 8;    // Mindustry Logic for the latest release of Mindustry 8
 
-const date = "2025-10-30";    // Year-month-day
+const date = "2025-11-02";    // Year-month-day
 
 print("[pink]Vela Attack Logic[]\nUnits are ");
 isEnabled = switch1.@enabled;

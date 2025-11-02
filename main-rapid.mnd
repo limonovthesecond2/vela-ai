@@ -4,7 +4,7 @@
 
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
-param coreAppr = 6;    /// Approach distance to core during bomb loading
+param vaultAppr = 6;    /// Approach distance to vault during bomb loading
 param idleAppr = 30;    /// Approach distance to vault when logic is idle
 param angleChange = 30;    /// Angle change in carousel logic (more is faster)
 param defaultFlag = 1000;    /// Default unit flag value
@@ -78,18 +78,19 @@ begin
         if items < unitCap then
             var bombType = sorter1.@config;
             if bombType != null then
-                var myCoreX;
-                var myCoreY;
-                var myCore = ulocate(:building, :core, false, out myCoreX, out myCoreY);
-                approach(myCoreX, myCoreY, coreAppr);
-                isNear = within(myCoreX, myCoreY, defDist);
-                if isNear == 1 then
-                    itemTake(myCore, bombType, unitCap);
-                    autoDef(unitRange);
-                else
-                    boost(1);
+                if vault1 != null then
+                    var vaultX = vault1.@x;
+                    var vaultY = vault1.@y;
+                    approach(vaultX, vaultY, vaultAppr);
+                    isNear = within(vaultX, vaultY, defDist);
+                    if isNear == 1 then
+                        itemTake(vault1, bombType, unitCap);
+                        autoDef(unitRange);
+                    else
+                        boost(1);
+                    end;
+                    continue;
                 end;
-                continue;
             end;
         end;
 
@@ -126,7 +127,7 @@ begin
                 moveY += idleY;
                 pathfind(moveX, moveY);
             else
-                approach(idleX, idleY, coreAppr);
+                approach(idleX, idleY, vaultAppr);
                 boost(1);
             end;
             continue;

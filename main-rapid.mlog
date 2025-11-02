@@ -2,8 +2,8 @@ print "Possible units: @vela, @quasar, @pulsar and @nova"
 set unit @vela
 print "Approach distance to repair turret"
 set repAppr 4
-print "Approach distance to core during bomb loading"
-set coreAppr 6
+print "Approach distance to vault during bomb loading"
+set vaultAppr 6
 print "Approach distance to vault when logic is idle"
 set idleAppr 30
 print "Angle change in carousel logic (more is faster)"
@@ -67,22 +67,24 @@ ucontrol approach :repX :repY repAppr 0 0
 ucontrol boost 1 0 0 0 0
 jump 38 always 0 0
 sensor :items @unit @totalItems
-jump 92 greaterThanEq :items :unitCap
+jump 94 greaterThanEq :items :unitCap
 sensor :bombType sorter1 @config
-jump 92 equal :bombType null
-ulocate building core false @copper :myCoreX :myCoreY 0 :myCore
-ucontrol approach :myCoreX :myCoreY coreAppr 0 0
-ucontrol within :myCoreX :myCoreY :defDist :isNear 0
-jump 90 notEqual :isNear 1
-ucontrol itemTake :myCore :bombType :unitCap 0 0
+jump 94 equal :bombType null
+jump 94 equal vault1 null
+sensor :vaultX vault1 @x
+sensor :vaultY vault1 @y
+ucontrol approach :vaultX :vaultY vaultAppr 0 0
+ucontrol within :vaultX :vaultY :defDist :isNear 0
+jump 92 notEqual :isNear 1
+ucontrol itemTake vault1 :bombType :unitCap 0 0
 uradar enemy any any distance 0 1 :autoDef:enUnit
-jump 82 equal :autoDef:enUnit null
+jump 84 equal :autoDef:enUnit null
 ucontrol boost 0 0 0 0 0
 ucontrol targetp :autoDef:enUnit 1 0 0 0
 jump 38 always 0 0
 ulocate damaged core true @copper :autoDef:outX :autoDef:outY 0 0
 ucontrol within :autoDef:outX :autoDef:outY :unitRange :autoDef:isNear 0
-jump 88 notEqual :autoDef:isNear 1
+jump 90 notEqual :autoDef:isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target :autoDef:outX :autoDef:outY 1 0 0
 jump 38 always 0 0
@@ -92,26 +94,26 @@ ucontrol boost 1 0 0 0 0
 jump 38 always 0 0
 ucontrol flag defaultFlag 0 0 0 0
 sensor :isEnabled switch1 @enabled
-jump 132 notEqual :isEnabled 0
-jump 99 notEqual vault1 null
+jump 134 notEqual :isEnabled 0
+jump 101 notEqual vault1 null
 set :idleX @thisx
 set :idleY @thisy
-jump 101 always 0 0
+jump 103 always 0 0
 sensor :idleX vault1 @x
 sensor :idleY vault1 @y
 ucontrol within :idleX :idleY :defDistIdle :isNear 0
-jump 129 notEqual :isNear 1
+jump 131 notEqual :isNear 1
 uradar enemy any any distance 0 1 :autoDef:enUnit
-jump 108 equal :autoDef:enUnit null
+jump 110 equal :autoDef:enUnit null
 ucontrol boost 0 0 0 0 0
 ucontrol targetp :autoDef:enUnit 1 0 0 0
-jump 115 always 0 0
+jump 117 always 0 0
 ulocate damaged core true @copper :autoDef:outX :autoDef:outY 0 0
 ucontrol within :autoDef:outX :autoDef:outY :unitRange :autoDef:isNear 0
-jump 114 notEqual :autoDef:isNear 1
+jump 116 notEqual :autoDef:isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target :autoDef:outX :autoDef:outY 1 0 0
-jump 115 always 0 0
+jump 117 always 0 0
 ucontrol boost 1 0 0 0 0
 sensor :unitX @unit @x
 sensor :unitY @unit @y
@@ -127,21 +129,21 @@ op add :moveX :moveX :idleX
 op add :moveY :moveY :idleY
 ucontrol pathfind :moveX :moveY 0 0 0
 jump 38 always 0 0
-ucontrol approach :idleX :idleY coreAppr 0 0
+ucontrol approach :idleX :idleY vaultAppr 0 0
 ucontrol boost 1 0 0 0 0
 jump 38 always 0 0
 sensor :controlled arc1 @controlled
-jump 152 notEqual :controlled 2
+jump 154 notEqual :controlled 2
 sensor :arcX arc1 @shootX
 sensor :arcY arc1 @shootY
 ucontrol within :arcX :arcY :enBuildDist :isNear 0
-jump 149 notEqual :isNear 1
+jump 151 notEqual :isNear 1
 sensor :isShooting arc1 @shooting
-jump 149 notEqual :isShooting 1
+jump 151 notEqual :isShooting 1
 ucontrol boost 0 0 0 0 0
 ucontrol target :arcX :arcY 1 0 0
 sensor :attackBuilding:isBoosted @unit @boosting
-jump 147 notEqual :attackBuilding:isBoosted 1
+jump 149 notEqual :attackBuilding:isBoosted 1
 ucontrol pathfind :arcX :arcY 0 0 0
 ucontrol flag kamikazeFlag 0 0 0 0
 jump 38 always 0 0
@@ -151,9 +153,9 @@ ucontrol move :arcX :arcY 0 0 0
 ucontrol boost 1 0 0 0 0
 jump 38 always 0 0
 uradar enemy any any maxHealth 0 1 :enUnit
-jump 162 equal :enUnit null
+jump 164 equal :enUnit null
 sensor :enMaxHp :enUnit @maxHealth
-jump 162 lessThan :enMaxHp :dangEnemy
+jump 164 lessThan :enMaxHp :dangEnemy
 ucontrol boost 0 0 0 0 0
 ucontrol targetp :enUnit 1 0 0 0
 sensor :enemyX :enUnit @x
@@ -161,13 +163,13 @@ sensor :enemyY :enUnit @y
 ucontrol approach :enemyX :enemyY :enUnitAppr 0 0
 jump 38 always 0 0
 ulocate building turret true @copper :turretX :turretY :enTurr 0
-jump 175 notEqual :enTurr 1
+jump 177 notEqual :enTurr 1
 ucontrol within :turretX :turretY :enBuildDist :isNear 0
-jump 175 notEqual :isNear 1
+jump 177 notEqual :isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target :turretX :turretY 1 0 0
 sensor :attackBuilding:isBoosted @unit @boosting
-jump 173 notEqual :attackBuilding:isBoosted 1
+jump 175 notEqual :attackBuilding:isBoosted 1
 ucontrol pathfind :turretX :turretY 0 0 0
 ucontrol flag kamikazeFlag 0 0 0 0
 jump 38 always 0 0
@@ -175,24 +177,24 @@ ucontrol approach :turretX :turretY :unitRange 0 0
 jump 38 always 0 0
 ulocate building core true @copper :coreX :coreY 0 0
 ucontrol within :coreX :coreY :enBuildDist :isNear 0
-jump 187 notEqual :isNear 1
+jump 189 notEqual :isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target :coreX :coreY 1 0 0
 sensor :attackBuilding:isBoosted @unit @boosting
-jump 185 notEqual :attackBuilding:isBoosted 1
+jump 187 notEqual :attackBuilding:isBoosted 1
 ucontrol pathfind :coreX :coreY 0 0 0
 ucontrol flag kamikazeFlag 0 0 0 0
 jump 38 always 0 0
 ucontrol approach :coreX :coreY :unitRange 0 0
 jump 38 always 0 0
 ulocate building generator true @copper :genX :genY :enGener 0
-jump 200 notEqual :enGener 1
+jump 202 notEqual :enGener 1
 ucontrol within :genX :genY :enBuildDist :isNear 0
-jump 200 notEqual :isNear 1
+jump 202 notEqual :isNear 1
 ucontrol boost 0 0 0 0 0
 ucontrol target :genX :genY 1 0 0
 sensor :attackBuilding:isBoosted @unit @boosting
-jump 198 notEqual :attackBuilding:isBoosted 1
+jump 200 notEqual :attackBuilding:isBoosted 1
 ucontrol pathfind :genX :genY 0 0 0
 ucontrol flag kamikazeFlag 0 0 0 0
 jump 38 always 0 0
