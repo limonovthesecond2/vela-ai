@@ -1,0 +1,20 @@
+print "[pink]Vela Attack Logic[]\nUnits are "
+sensor :isEnabled switch1 @enabled
+jump 5 notEqual :isEnabled 0
+print "[green]idle[]"
+jump 6 always 0 0
+print "[red]attacking[]"
+print "\n\nPress the [orange]switch[] to toggle [red]attack[]/[green]idle[]. Units will repair at repair turrets within 1 minute with power > 0. You can control units using the [orange]arc turret[] and change bomb type in the [orange]sorter[]\n\n  made by [orange]testt[] on 2025-11-02\n\nSource code: [cyan]github.com/limonovthesecond2/vela-ai"
+printflush message1
+set :i 0
+sensor :controlled arc1 @controlled
+jump 12 notEqual :controlled 2
+control enabled switch1 1 0 0 0
+getlink :block :i
+sensor :blockType :block @type
+jump 16 equal :blockType @unloader
+jump 18 notEqual :blockType @item-source
+sensor :bombType sorter1 @config
+control config :block :bombType 0 0 0
+op add :i :i 1
+jump 9 lessThan :i @links
