@@ -4,7 +4,7 @@ print "Approach distance to repair turret"
 set repAppr 4
 print "Approach distance to core during bomb loading"
 set coreAppr 6
-print "Approach distance to core when logic is idle"
+print "Approach distance to logic during idle mode"
 set idleAppr 30
 print "Angle change in carousel logic (more is faster)"
 set angleChange 30

@@ -5,7 +5,7 @@
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
 param coreAppr = 6;    /// Approach distance to core during bomb loading
-param idleAppr = 30;    /// Approach distance to core when logic is idle
+param idleAppr = 30;    /// Approach distance to logic during idle mode
 param angleChange = 30;    /// Angle change in carousel logic (more is faster)
 param defaultFlag = 100;    /// Default unit flag value
 param kamikazeFlag = 111;    /// Kamikaze attack flag value (should be different from defaultFlag)
