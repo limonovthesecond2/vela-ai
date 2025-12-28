@@ -203,4 +203,5 @@ jump 38 always 0 0
 ucontrol autoPathfind 0 0 0 0 0
 ucontrol boost 1 0 0 0 0
 jump 38 always 0 0
+print "Created by testt"
 print "Compiled by Mindcode - github.com/cardillan/mindcode"
