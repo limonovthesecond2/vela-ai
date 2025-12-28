@@ -77,20 +77,18 @@ begin
         var items = @unit.@totalItems;
         if items < unitCap then
             var bombType = sorter1.@config;
-            if bombType != null then
-                if vault1 != null then
-                    var vaultX = vault1.@x;
-                    var vaultY = vault1.@y;
-                    approach(vaultX, vaultY, vaultAppr);
-                    isNear = within(vaultX, vaultY, defDist);
-                    if isNear == 1 then
-                        itemTake(vault1, bombType, unitCap);
-                        autoDef(unitRange);
-                    else
-                        boost(1);
-                    end;
-                    continue;
+            if bombType != null and vault1 != null then
+                var vaultX = vault1.@x;
+                var vaultY = vault1.@y;
+                approach(vaultX, vaultY, vaultAppr);
+                isNear = within(vaultX, vaultY, defDist);
+                if isNear == 1 then
+                    itemTake(vault1, bombType, unitCap);
+                    autoDef(unitRange);
+                else
+                    boost(1);
                 end;
+                continue;
             end;
         end;
 
