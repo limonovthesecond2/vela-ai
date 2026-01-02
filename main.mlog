@@ -5,7 +5,7 @@ set repAppr 4
 print "Approach distance to core during bomb loading"
 set coreAppr 6
 print "Approach distance to logic during idle mode"
-set idleAppr 30
+set idleAppr 40
 print "Angle change in carousel logic (more is faster)"
 set angleChange 30
 print "Default unit flag value"
@@ -25,7 +25,7 @@ op mul :minRepHp :maxHp 0.55
 print "Maximum health for repair"
 op mul :maxRepHp :maxHp 0.98
 print "Maximum distance to repair turret"
-op mul :maxRepDist :maxSpeed 60
+op mul :maxRepDist :maxSpeed 120
 print "Minimum health of a dangerous enemy"
 op mul :dangEnemy :maxHp 0.068
 print "Defense range during repair and bomb loading"
@@ -35,7 +35,7 @@ op add :defDistIdle idleAppr 5
 print "Approach distance to enemy units"
 op mul :enUnitAppr :unitRange 0.9
 print "Attack range to enemy buildings"
-op mul :enBuildDist :unitRange 1.5
+op mul :enBuildDist :unitRange 2
 ubind unit
 sensor :unitFlag @unit @flag
 jump 68 notEqual :unitFlag defaultFlag

@@ -1,12 +1,12 @@
 #set target = 8;    // Mindustry Logic for the latest release of Mindustry 8
-#set remarks = active;    // Remarks are included in the compiled code and are executed
+#set remarks = active;    // Remarks (///) are included in the compiled code and are executed
 #set syntax = strict;    // Enable strict syntax checking
-#set author = testt;
+#set author = testt;    // Author of the code
 
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
 param coreAppr = 6;    /// Approach distance to core during bomb loading
-param idleAppr = 30;    /// Approach distance to logic during idle mode
+param idleAppr = 40;    /// Approach distance to logic during idle mode
 param angleChange = 30;    /// Angle change in carousel logic (more is faster)
 param defaultFlag = 100;    /// Default unit flag value
 param kamikazeFlag = 111;    /// Kamikaze attack flag value (should be different from defaultFlag)
@@ -34,12 +34,12 @@ begin
 
     var minRepHp = maxHp * 0.55;    /// Minimum health for repair
     var maxRepHp = maxHp * 0.98;    /// Maximum health for repair
-    var maxRepDist = maxSpeed * 60;    /// Maximum distance to repair turret
+    var maxRepDist = maxSpeed * 120;    /// Maximum distance to repair turret
     var dangEnemy = maxHp * 0.068;    /// Minimum health of a dangerous enemy
     var defDist = repAppr + 10;    /// Defense range during repair and bomb loading
     var defDistIdle = idleAppr + 5;    /// Defense range during idle
     var enUnitAppr = unitRange * 0.9;    /// Approach distance to enemy units
-    var enBuildDist = unitRange * 1.5;    /// Attack range to enemy buildings
+    var enBuildDist = unitRange * 2;    /// Attack range to enemy buildings
 
     while true do
         ubind(unit);
