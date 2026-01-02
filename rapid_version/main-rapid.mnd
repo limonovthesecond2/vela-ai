@@ -1,7 +1,7 @@
 #set target = 8;    // Mindustry Logic for the latest release of Mindustry 8
-#set remarks = active;    // Remarks are included in the compiled code and are executed
+#set remarks = active;    // Remarks (///) are included in the compiled code and are executed
 #set syntax = strict;    // Enable strict syntax checking
-#set author = testt;
+#set author = testt;    // Author of the code
 
 param unit = @vela;    /// Possible units: @vela, @quasar, @pulsar and @nova
 param repAppr = 4;    /// Approach distance to repair turret
